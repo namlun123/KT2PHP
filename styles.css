@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, Times, serif, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f8f8d0;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.login-form {
+    background-color: #a39b9ba1;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+.login-form h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.login-form label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-form input[type="submit"] {
+    background-color: #062f5c;
+    color: #fff;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.login-form input[type="submit"]:hover {
+    background-color: #2d5177;
+}
+
+/*css cho trang chủ*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    padding-top: 60px; /* Tạo khoảng trống cho thanh menu cố định */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #111942;
+    padding: 0.8rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Đảm bảo thanh menu luôn ở trên */
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #49487a;
+}
+
+.logout {
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.logout:hover {
+    background-color: #e04344;
+}
+
+.welcome-text {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-left: auto; /* Đẩy phần chào mừng sang bên phải */
+    padding-right: 1rem;
+}
+
+.cart {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    color: #ffffff;
+    position: relative;
+}
+
+.cart:hover {
+    color: #ddd;
+}

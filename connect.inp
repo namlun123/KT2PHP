@@ -1,0 +1,11 @@
+<?php
+    $host="localhost";
+    $user="root";
+    $pass="";
+    $db="kt2php";
+    $con=new mysqli($host,$user,$pass,$db);
+    if(!$con){
+        die("Lỗi kết nối".$con->connect_error);
+    }
+
+?>
