@@ -3,104 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách </title>
+    <title>Danh sách sản phẩm </title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9; /* Màu nền nhẹ */
+    color: #333; /* Màu chữ tối */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .container {
-            width: 80%;
-            margin-top: 2rem;
-            text-align: center;
-        }
+.container {
+    width: 80%;
+    margin-top: 2rem;
+    text-align: center;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #ffffff; /* Màu nền trắng cho bảng */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        table th, table td {
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-            font-size: 1rem;
-        }
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ccc; /* Màu xám cho border */
+    text-align: center;
+    font-size: 1rem;
+}
 
-        table th {
-            background-color: #4CAF50;
-            color: #ffffff;
-        }
+table th {
+    background-color: #003366; /* Màu xanh dương đậm */
+    color: #ffffff; /* Màu chữ trắng */
+}
 
-        table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Màu xám nhạt cho hàng chẵn */
+}
 
-        .actions a {
-            text-decoration: none;
-            color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            margin: 0 4px;
-        }
+.actions a {
+    text-decoration: none;
+    color: #ffffff; /* Màu chữ trắng */
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin: 0 4px;
+}
 
-        .details-btn { background-color: #2196F3; }
-        .edit-btn { background-color: #ffc107; }
-        .delete-btn { background-color: #f44336; }
+.details-btn { 
+    background-color: #0056b3; /* Xanh dương đậm */
+}
 
-        .delete-btn:hover { background-color: #d32f2f; }
-        .edit-btn:hover { background-color: #ffa000; }
-        .details-btn:hover { background-color: #1976d2; }
+.edit-btn { 
+    background-color: #888888; /* Màu xám */
+}
 
-        .add-product {
-            display: inline-block;
-            margin: 1rem 0;
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: #ffffff;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
+.delete-btn { 
+    background-color: #b22222; /* Màu đỏ tối */
+}
 
-        .add-product:hover {
-            background-color: #388E3C;
-        }
+.delete-btn:hover { 
+    background-color: #a31c1c; /* Màu đỏ tối khi hover */
+}
 
-        .pagination {
-            margin: 1.5rem 0;
-            font-size: 1rem;
-        }
+.edit-btn:hover { 
+    background-color: #666666; /* Màu xám tối khi hover */
+}
 
-        .pagination a {
-            margin: 0 5px;
-            color: #4CAF50;
-            text-decoration: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: 1px solid #4CAF50;
-            transition: background-color 0.3s, color 0.3s;
-        }
+.details-btn:hover { 
+    background-color: #004494; /* Xanh dương nhạt khi hover */
+}
 
-        .pagination a:hover {
-            background-color: #4CAF50;
-            color: #ffffff;
-        }
+.add-product {
+    display: inline-block;
+    margin: 1rem 0;
+    padding: 8px 16px;
+    background-color: #0056b3; /* Xanh dương đậm */
+    color: #ffffff; /* Màu chữ trắng */
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.add-product:hover {
+    background-color: #004494; /* Xanh dương nhạt khi hover */
+}
+
+.pagination {
+    margin: 1.5rem 0;
+    font-size: 1rem;
+}
+
+.pagination a {
+    margin: 0 5px;
+    color: #003366; /* Xanh dương đậm */
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #003366; /* Xanh dương đậm */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #003366; /* Xanh dương đậm khi hover */
+    color: #ffffff; /* Màu chữ trắng khi hover */
+}
+
     </style>
 </head>
 <script>
