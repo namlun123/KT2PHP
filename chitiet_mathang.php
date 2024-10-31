@@ -18,7 +18,7 @@ $tensp = $row['tenhang'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sản Phẩm</title>
-    <link rel="stylesheet" href="CSS/chitiet_mathang.css">
+    <link rel="stylesheet" href="css/chitiet_mathang.css">
     <script>
         function showPopup(productName, quantity) {
             document.getElementById('popup-message').innerText = 
