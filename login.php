@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- JavaScript kiểm tra tham số error trong URL và hiển thị alert -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'invalid_credentials') {
+            alert('Thông tin đăng nhập không đúng hoặc tài khoản không hoạt động.');
+        }
+    </script>
     <div class="login-container">
         <form method="POST" action="xllogin.php" class="login-form">
             <h2>Đăng nhập</h2>
