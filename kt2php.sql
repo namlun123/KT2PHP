@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 09:45 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.0.28
+-- Generation Time: Oct 31, 2024 at 10:23 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `qlbanhang`
+-- Database: `kt2php`
 --
 
 -- --------------------------------------------------------
@@ -127,17 +127,17 @@ CREATE TABLE `sanpham` (
 --
 
 INSERT INTO `sanpham` (`mahang`, `tenhang`, `giahang`, `hinhanh`, `soluong`, `maloai`, `nguoithem`, `ngaythem`, `nguoisua`, `ngaysua`) VALUES
-('SP01', 'Bot Giat OMO', 200000, 'botgiatomo.jpg', 100, 'M01', NULL, NULL, NULL, NULL),
-('SP03', 'Bot giat Sufff', 250000, 'botgiatsuf.jpg', 100, 'M01', NULL, NULL, NULL, NULL),
-('SP111', 'sdfsafdsafsa', 0, 'bai-3.png', 0, 'M01', NULL, NULL, NULL, NULL),
-('SP112', 'fdfgdsgfds', 0, 'anh7.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
-('SP114', 'San pham tot', 0, 'anh7.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
-('SP115', 'San pham chua tot', 0, 'anh7.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
-('SP15', 'San pham kem danh rang', 0, 'anh1.jpg', 0, 'L01', NULL, NULL, NULL, NULL),
-('SP2', 'Sua rua mat tri mun', 1500000, 'botgiatlix.jpg', 200, 'M02', NULL, NULL, NULL, NULL),
-('SP20', 'kem danh rang', 0, 'anh4.jpg', 0, 'L03', NULL, NULL, NULL, NULL),
-('SP4', 'Sua tam LIX', 1500000, 'botgiatlix.jpg', 2000, 'M03', NULL, NULL, NULL, NULL),
-('SP40', 'May do hoi nuoc', 0, 'anh4.jpg', 0, 'M05', NULL, NULL, NULL, NULL);
+('SP01', 'Bot Giat OMO', 200000, 'omo.png', 100, 'M01', NULL, NULL, NULL, NULL),
+('SP03', 'Bot giat Sufff', 250000, 'suff.png', 100, 'M01', NULL, NULL, NULL, NULL),
+('SP111', 'sdfsafdsafsa', 0, 'sp1.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
+('SP112', 'fdfgdsgfds', 0, 'sp2.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
+('SP114', 'San pham tot', 0, 'sp3.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
+('SP115', 'San pham chua tot', 0, 'sp4.jpg', 0, 'M01', NULL, NULL, NULL, NULL),
+('SP15', 'San pham kem danh rang', 0, 'kemdanhrang.png', 0, 'L01', NULL, NULL, NULL, NULL),
+('SP2', 'Sua rua mat tri mun', 1500000, 'suaruamat.png', 200, 'M02', NULL, NULL, NULL, NULL),
+('SP20', 'kem danh rang', 0, 'sp5.jpg', 0, 'L03', NULL, NULL, NULL, NULL),
+('SP4', 'Sua tam LIX', 1500000, 'sp6.jpg', 2000, 'M03', NULL, NULL, NULL, NULL),
+('SP40', 'May do hoi nuoc', 0, 'sp7.jpg', 0, 'M05', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

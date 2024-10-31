@@ -45,22 +45,20 @@ $result_loai = $conn->query($sql_loai);
     <form action="xu_ly_them_sanpham.php" method="POST" enctype="multipart/form-data" onsubmit="return confirmSubmit();">
         <label for="mahang">Mã hàng:</label>
         <input type="text" id="mahang" name="mahang" required>
+        
         <label for="tenhang">Tên hàng:</label>
         <input type="text" id="tenhang" name="tenhang" required>
-        <label for="soluong">Giá:</label>
+        
+        <label for="giahang">Giá:</label>
         <input type="number" id="giahang" name="giahang" required>
-        <label for="mota">Số lượng:</label>
+        
+        <label for="soluong">Số lượng:</label>
         <input type="number" id="soluong" name="soluong">
-        <label for="giahang">Mã loại:</label>
-    <select id="maloai" name="maloai" required>
-    <?php
-    if ($result_loai->num_rows > 0) {
-        while ($row_loai = $result_loai->fetch_assoc()) {
-            echo "<option value='{$row_loai['Maloai']}'>{$row_loai['Maloai']}</option>"; 
-        }
-    }
-    ?>
-    </select>
+       
+        <label for="maloai">Mã loại:</label>
+        <input type="text" id="maloai" name="maloai" required>
+
+
         <label for="hinhanh">Hình ảnh:</label>
         <input type="file" id="hinhanh" name="hinhanh" accept="image/*">
         <button type="submit">Thêm sản phẩm</button>
