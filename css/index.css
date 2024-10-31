@@ -1,0 +1,296 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    font-family: Cambria, Georgia, Times, 'Times New Roman', serif;
+    background-color: #f3f3f3;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #03223d;
+    color: white;
+}
+
+header h1 {
+    font-size: 2em;
+}
+
+header nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    display: flex;
+    margin-top: 20px;
+    width: 100%; /* Đảm bảo main chiếm toàn bộ chiều rộng */
+}
+
+.products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 95%;
+}
+
+.product-card {
+    background-color: white;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.product-card p {
+    margin: 5px 0;
+}
+
+.product-card button {
+    background-color: #FF851B;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-card button:hover {
+    background-color: #e67e22;
+}
+
+/* CSS cho phần phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.pagination a {
+    color: #666b70;
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a.active {
+    background-color: #546981;
+    color: white;
+    border: 1px solid #0074D9;
+}
+
+.pagination a:hover {
+    background-color: #fcfbff;
+    color: black;
+}
+
+.sidebar {
+    width: 25%;
+    margin-left: 0; /* Đã xóa khoảng cách bên trái */
+}
+
+.login, .category {
+    background-color: #e0e0e0;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.login h2, .category h3 {
+    color: #041a2e;
+    margin-bottom: 10px;
+}
+
+.login form input, .login form button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.login form button {
+    background-color: #546981;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.login form button:hover {
+    background-color: #04284e;
+}
+button:hover {
+    transform: scale(1.05); /* Phóng to nhẹ */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Đổ bóng khi hover */
+}
+.category ul {
+    list-style: none;
+}
+
+.category ul li {
+    padding: 8px 0;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.category ul li:hover {
+    color: #546981;
+}
+/* CSS cơ bản cho phần sản phẩm dạng thẻ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.products {
+    grid-template-columns: repeat(4, 1fr); /* 4 sản phẩm mỗi hàng */
+    margin-top: 20px;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.product-card p {
+    margin: 10px 0;
+}
+
+.product-card button {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-card button:hover {
+    background-color: #2980b9;
+}
+
+.main-content {
+    display: flex;
+    width: 100%;
+    gap: 0; /* Đặt gap bằng 0 để không có khoảng cách giữa product-section và sidebar */
+}
+
+.product-section {
+    width: 75%;
+}
+
+.sidebar {
+    width: 25%;
+}
+/* Định dạng tổng quát cho header */
+header {
+    background-color: #050920; /* Màu nền xanh lá */
+    padding: 20px; /* Khoảng cách padding */
+    text-align: center;
+    color: #ffffff; /* Màu chữ trắng */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+}
+
+/* Định dạng tiêu đề */
+header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Định dạng thanh điều hướng */
+header nav {
+    margin-top: 10px;
+}
+
+header nav a {
+    text-decoration: none; /* Bỏ gạch chân */
+    color: #ffffff;
+    margin: 0 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: color 0.3s ease; /* Hiệu ứng chuyển đổi màu */
+}
+
+/* Hiệu ứng khi di chuột vào các liên kết */
+header nav a:hover {
+    color: #4f4da0; /* Màu vàng khi hover */
+    text-shadow: 0px 0px 5px rgba(87, 96, 124, 0.6);
+}
+
+/* Responsive cho màn hình nhỏ hơn */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    header nav a {
+        display: block;
+        margin: 10px 0;
+        font-size: 1rem;
+    }
+}
+/* Định dạng ô chứa nút chi tiết */
+td.actions {
+    text-align: center;
+}
+
+/* Định dạng cho nút chi tiết */
+.details-btn {
+    display: inline-block;
+    padding: 8px 15px; /* Khoảng cách bên trong */
+    background-color: #546981; /* Màu nền xanh đậm */
+    color: #ffffff; /* Màu chữ trắng */
+    text-decoration: none; /* Bỏ gạch chân */
+    border-radius: 5px; /* Góc bo tròn */
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển màu và phóng to */
+}
+
+/* Hiệu ứng khi di chuột vào nút */
+.details-btn:hover {
+    background-color: #284768; /* Màu xanh đậm hơn khi hover */
+    transform: scale(1.05); /* Phóng to nhẹ */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Đổ bóng khi hover */
+}
