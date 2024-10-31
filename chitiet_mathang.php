@@ -1,17 +1,12 @@
 <?php
 session_start();
-
 include("connect.inp");
-
 $masp = $_GET["Masp"];
-
 $sql = "SELECT * FROM sanpham WHERE mahang='$masp'";
 $result = $con->query($sql);
 $row = $result->fetch_assoc(); 
-
 $tensp = $row['tenhang'];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +24,6 @@ $tensp = $row['tenhang'];
             document.getElementById('popup-overlay').style.display = 'none';
             document.getElementById('quantity').value = ""; // Reset ô nhập số lượng về trống
         }
-
         function goToCart() {
             window.location.href = 'giohang.php';
         }
@@ -54,9 +48,7 @@ $tensp = $row['tenhang'];
                 <input type='submit' value='Thêm vào giỏ hàng'>
             <?php endif; ?>
         </form>
-
         <a href='dssp.php' class='back-button'>Quay lại</a>
-
         <!-- Popup hiển thị thông báo sau khi thêm vào giỏ hàng -->
         <div class="popup-overlay" id="popup-overlay">
             <div class="popup-content">
@@ -68,7 +60,6 @@ $tensp = $row['tenhang'];
             </div>
         </div>
     </div>
-
     <script>
         function submitForm() {
             var formData = new FormData(document.querySelector('form'));
