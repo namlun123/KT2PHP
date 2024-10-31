@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container chính */
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề */
+h3 {
+    color: #062f5c;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Phong cách cho các nhãn */
+.product-info label, .quantity label {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Các thông tin chi tiết sản phẩm */
+.product-info span {
+    font-weight: normal;
+    color: #333;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* Nút thêm vào giỏ hàng */
+input[type="submit"] {
+    background-color: #062f5c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+}
+input[type="submit"]:hover {
+    background-color: #054080;
+}
+/* Trường nhập số lượng */
+.quantity input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+/* Nút quay lại */
+.back-button {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #062f5c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-button:hover {
+    color: #054080;
+}
+
+/* Popup overlay */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+/* Nội dung popup */
+.popup-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+}
+#popup-message {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+/* Các thông tin chi tiết sản phẩm */
+.product-info label, .product-info span {
+    display: block; /* Hiển thị mỗi nhãn và giá trị trên một dòng riêng */
+    margin-bottom: 10px;
+}
+/* Các nút trong popup */
+.popup-buttons button {
+    background-color: #062f5c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.popup-buttons button:hover {
+    background-color: #054080;
+}
