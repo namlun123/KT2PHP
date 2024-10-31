@@ -6,7 +6,7 @@
     <title>E-commerce Dashboard</title>
     <!-- Thêm Font Awesome để dùng biểu tượng -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="navbar">
