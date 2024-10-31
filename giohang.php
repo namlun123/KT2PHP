@@ -80,7 +80,7 @@
             FROM sanpham 
             INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
             INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
-            WHERE chedo = 0 AND nguoidathang = '$user' AND chitietdathang.nguoixoa is null";
+            WHERE chedo = 0 AND nguoidathang = '$user' ";
         $result = $con->query($sql);
         $result = $con->query($sql);
 
