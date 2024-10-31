@@ -1,0 +1,108 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #062f5c; /* Thay đổi màu chữ thành #062f5c */
+    margin-bottom: 20px;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="number"], input[type="file"], select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #80bdff;
+    outline: none;
+}
+
+button {
+    background-color: #062f5c; /* Màu nền của nút */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #051d38; /* Màu nền khi hover (tối hơn màu chính) */
+}
+
+.error-popup {
+    text-align: center;
+    display: none; /* Ẩn hộp thoại lỗi */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid rgb(115, 14, 14);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+.error-popup h3 {
+    color: rgb(115, 14, 14);
+    margin: 0;
+    font-size: 18px;
+}
+
+.error-popup p {
+    margin: 10px 0;
+}
+
+.error-popup button {
+    background-color: rgb(115, 14, 14);
+}
+
+.overlay {
+    display: none; /* Ẩn lớp mờ */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Để nằm dưới hộp thoại lỗi */
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #062f5c; /* Thay đổi màu chữ thành #062f5c */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
