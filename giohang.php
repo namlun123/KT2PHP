@@ -5,12 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h3 {
+            text-align: center;
+            color: #555;
+        }
         table {
             width: 70%;
-            margin-left: 15%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        table, tr, td {
-            border: 1px solid;
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        img {
+            border-radius: 8px;
+        }
+        #tongtien, #VAT, #thanhTienTong {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .summary {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .summary div {
+            margin: 10px 0;
+        }
+        #dathang {
+            width: 70%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #dathang input[type="text"], #dathang select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #dathang input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #dathang input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        a {
+            color: #d9534f;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
     <script>
@@ -19,66 +94,112 @@
             return confirm("Bạn có muốn xóa không?");
         }
 
-        // Hàm hiển thị thông báo lỗi
         function showError(message) {
             alert(message);
         }
         
-        // Hàm tính thành tiền khi thay đổi số lượng
+        // Tính thành tiền mỗi khi số lượng thay đổi
         function tinhtien(row) {
             var soluong = document.getElementById("soluong" + row).value;
             var gia = document.getElementById("gia" + row).innerText;
             var thanhtien = soluong * parseFloat(gia);
             document.getElementById("thanhtien" + row).innerText = thanhtien.toLocaleString() + " VNĐ";
-            tinhTongTien(); // Tính lại tổng tiền khi thay đổi số lượng
+            tinhTongTien();
         }
 
-        // Hàm tính tổng tiền của giỏ hàng
+        // Tính tổng tiền và cập nhật VAT, thành tiền
         function tinhTongTien() {
             var total = 0;
             var rows = document.getElementsByClassName("thanhtien");
             for (var i = 0; i < rows.length; i++) {
                 total += parseFloat(rows[i].innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
             }
-            document.getElementById("tongtien").innerText = total + " VNĐ";
-        }
 
-        // Hiển thị thông báo nếu sản phẩm đã được xóa
-        window.onload = function() {
-            if (new URLSearchParams(window.location.search).get('deleted') === 'true') {
-                alert("Sản phẩm đã được xóa khỏi giỏ hàng thành công!");
-            }
-
-            // Hiển thị thông báo lỗi
-            const error = new URLSearchParams(window.location.search).get('error');
-            if (error) {
-                let message;
-                switch (error) {
-                    case '1':
-                        message = "Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.";
-                        break;
-                    case '2':
-                        message = "Không tìm thấy đơn hàng phù hợp hoặc đơn hàng đã hoàn thành.";
-                        break;
-                    case '3':
-                        message = "Yêu cầu không hợp lệ. Vui lòng thử lại.";
-                        break;
-                }
-                alert(message);
-            }
-        };
-
-        function tinhThanhTien() {
-            var total = parseFloat(document.getElementById("tongtien").innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
+            var VAT = total * 0.1;  // Tính VAT là 10% của tổng tiền
             var shipping = parseFloat(document.getElementById("shippingCost").innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
-            var VAT = total * 0.1; // Giả sử VAT là 10%
-            var finalAmount = total + shipping + VAT;
+            var finalAmount = total + VAT + shipping;
 
+            // Hiển thị kết quả
+            document.getElementById("tongtien").innerText = total.toLocaleString() + " VNĐ";
             document.getElementById("VAT").innerText = VAT.toLocaleString() + " VNĐ";
             document.getElementById("thanhTienTong").innerText = finalAmount.toLocaleString() + " VNĐ";
         }
 
-        
+        // Tính phí vận chuyển và cập nhật thành tiền
+        function calculateShipping() {
+            var province = document.getElementById("province").value;
+            var shippingCost = 0;
+
+            switch (province) {
+                case "Hà Nội":
+                    shippingCost = 30000;
+                    break;
+                case "Hà Giang":
+                case "Hà Nam":
+                case "Hải Dương":
+                case "Hải Phòng":
+                case "Hòa Bình":
+                case "Hưng Yên":
+                case "Lai Châu":
+                case "Lạng Sơn":
+                case "Ninh Bình":
+                case "Phú Thọ":
+                case "Quảng Ninh":
+                case "Sơn La":
+                case "Thái Bình":
+                case "Thái Nguyên":
+                case "Tuyên Quang":
+                case "Yên Bái":
+                    shippingCost = 40000;
+                    break;
+                case "Đà Nẵng":
+                case "Bình Định":
+                case "Hà Tĩnh":
+                case "Khánh Hòa":
+                case "Nghệ An":
+                case "Ninh Thuận":
+                case "Phú Yên":
+                case "Quảng Bình":
+                case "Quảng Nam":
+                case "Quảng Ngãi":
+                case "Quảng Trị":
+                case "Thừa Thiên Huế":
+                case "Vĩnh Phúc":
+                    shippingCost = 45000;
+                    break;
+                case "An Giang":
+                case "Bà Rịa - Vũng Tàu":
+                case "Bạc Liêu":
+                case "Bến Tre":
+                case "Bình Dương":
+                case "Bình Phước":
+                case "Cà Mau":
+                case "Cần Thơ":
+                case "Đắk Lắk":
+                case "Đắk Nông":
+                case "Gia Lai":
+                case "Kiên Giang":
+                case "Kon Tum":
+                case "Lâm Đồng":
+                case "Sóc Trăng":
+                case "Tây Ninh":
+                case "Tiền Giang":
+                case "Trà Vinh":
+                case "Vĩnh Long":
+                    shippingCost = 50000;
+                    break;
+                default:
+                    shippingCost = 0;
+            }
+
+            document.getElementById("shippingCost").innerText = shippingCost.toLocaleString() + " VNĐ";
+            tinhTongTien();
+        }
+
+        // Khi trang tải lại, tính tổng tiền và các chi phí khác
+        window.onload = function() {
+            tinhTongTien();
+        };
     </script>
 </head>
 <body>
@@ -193,77 +314,5 @@
         <input type='hidden' name='shipping' value="0">
         <input type="submit" value="Đặt hàng">
     </div>
-    <script>
-        function calculateShipping() {
-            var province = document.getElementById("province").value;
-            var shippingCost = 0;
-
-            switch (province) {
-                case "Hà Nội":
-                    shippingCost = 30000;
-                    break;
-                case "Hà Giang":
-                case "Hà Nam":
-                case "Hải Dương":
-                case "Hải Phòng":
-                case "Hòa Bình":
-                case "Hưng Yên":
-                case "Lai Châu":
-                case "Lạng Sơn":
-                case "Ninh Bình":
-                case "Phú Thọ":
-                case "Quảng Ninh":
-                case "Sơn La":
-                case "Thái Bình":
-                case "Thái Nguyên":
-                case "Tuyên Quang":
-                case "Yên Bái":
-                    shippingCost = 40000; // Northern region
-                    break;
-                case "Đà Nẵng":
-                case "Bình Định":
-                case "Hà Tĩnh":
-                case "Khánh Hòa":
-                case "Nghệ An":
-                case "Ninh Thuận":
-                case "Phú Yên":
-                case "Quảng Bình":
-                case "Quảng Nam":
-                case "Quảng Ngãi":
-                case "Quảng Trị":
-                case "Thừa Thiên Huế":
-                case "Vĩnh Phúc":
-
-                    shippingCost = 45000; // Central region
-                    break;
-                case "An Giang":
-                case "Bà Rịa - Vũng Tàu":
-                case "Bạc Liêu":
-                case "Bến Tre":
-                case "Bình Dương":
-                case "Bình Phước":
-                case "Cà Mau":
-                case "Cần Thơ":
-                case "Đắk Lắk":
-                case "Đắk Nông":
-                case "Gia Lai":
-                case "Kiên Giang":
-                case "Kon Tum":
-                case "Lâm Đồng":
-                case "Sóc Trăng":
-                case "Tây Ninh":
-                case "Tiền Giang":
-                case "Trà Vinh":
-                case "Vĩnh Long":
-                    shippingCost = 50000; // Southern region
-                    break;
-                default:
-                    shippingCost = 0;
-            }
-
-            document.getElementById("shippingCost").innerText = shippingCost.toLocaleString() + " VNĐ";
-            tinhThanhTien(); // Recalculate total amount with the new shipping cost
-        }
-    </script>
 </body>
 </html>
