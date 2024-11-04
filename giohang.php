@@ -67,6 +67,18 @@
                 alert(message);
             }
         };
+
+        function tinhThanhTien() {
+            var total = parseFloat(document.getElementById("tongtien").innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
+            var shipping = parseFloat(document.getElementById("shippingCost").innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
+            var VAT = total * 0.1; // Giả sử VAT là 10%
+            var finalAmount = total + shipping + VAT;
+
+            document.getElementById("VAT").innerText = VAT.toLocaleString() + " VNĐ";
+            document.getElementById("thanhTienTong").innerText = finalAmount.toLocaleString() + " VNĐ";
+        }
+
+        
     </script>
 </head>
 <body>
@@ -190,61 +202,59 @@
                 case "Hà Nội":
                     shippingCost = 30000;
                     break;
+                case "Hà Giang":
+                case "Hà Nam":
+                case "Hải Dương":
+                case "Hải Phòng":
+                case "Hòa Bình":
+                case "Hưng Yên":
+                case "Lai Châu":
+                case "Lạng Sơn":
+                case "Ninh Bình":
+                case "Phú Thọ":
+                case "Quảng Ninh":
+                case "Sơn La":
+                case "Thái Bình":
+                case "Thái Nguyên":
+                case "Tuyên Quang":
+                case "Yên Bái":
+                    shippingCost = 40000; // Northern region
+                    break;
+                case "Đà Nẵng":
+                case "Bình Định":
+                case "Hà Tĩnh":
+                case "Khánh Hòa":
+                case "Nghệ An":
+                case "Ninh Thuận":
+                case "Phú Yên":
+                case "Quảng Bình":
+                case "Quảng Nam":
+                case "Quảng Ngãi":
+                case "Quảng Trị":
+                case "Thừa Thiên Huế":
+                case "Vĩnh Phúc":
+
+                    shippingCost = 45000; // Central region
+                    break;
                 case "An Giang":
                 case "Bà Rịa - Vũng Tàu":
                 case "Bạc Liêu":
                 case "Bến Tre":
                 case "Bình Dương":
                 case "Bình Phước":
-                case "Bình Định":
                 case "Cà Mau":
                 case "Cần Thơ":
-                case "Đà Nẵng":
                 case "Đắk Lắk":
                 case "Đắk Nông":
                 case "Gia Lai":
-                case "Hà Giang":
-                case "Hà Nam":
-                case "Hà Tĩnh":
-                case "Hải Dương":
-                case "Hải Phòng":
-                case "Hòa Bình":
-                case "Hưng Yên":
-                case "Khánh Hòa":
                 case "Kiên Giang":
                 case "Kon Tum":
-                case "Lai Châu":
                 case "Lâm Đồng":
-                case "Lạng Sơn":
-                case "Nghệ An":
-                case "Ninh Bình":
-                case "Ninh Thuận":
-                case "Phú Thọ":
-                case "Phú Yên":
-                case "Quảng Bình":
-                case "Quảng Nam":
-                case "Quảng Ngãi":
-                case "Quảng Ninh":
-                case "Quảng Trị":
                 case "Sóc Trăng":
-                case "Sơn La":
                 case "Tây Ninh":
-                case "Thái Bình":
-                case "Thái Nguyên":
-                case "Thanh Hóa":
-                case "Thừa Thiên Huế":
                 case "Tiền Giang":
                 case "Trà Vinh":
-                case "Tuyên Quang":
                 case "Vĩnh Long":
-                case "Vĩnh Phúc":
-                case "Yên Bái":
-                    shippingCost = 40000; // Northern region
-                    break;
-                case "Central region":
-                    shippingCost = 45000; // Central region
-                    break;
-                case "Southern region":
                     shippingCost = 50000; // Southern region
                     break;
                 default:
