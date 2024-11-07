@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
-            color: #333;
+            color: #333433;
         }
         h3 {
             text-align: center;
