@@ -31,7 +31,7 @@ td {
 img {
     border-radius: 8px;
 }
-#tongtien, #VAT, #thanhTienTong {
+#tongtien, #VAT, #thanhTienTong, #shippingCost {
     font-size: 1.2em;
     font-weight: bold;
     color: #d9534f;
