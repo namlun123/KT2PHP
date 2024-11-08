@@ -6,12 +6,10 @@ include("connect.inp"); // Kết nối đến cơ sở dữ liệu
 $masp = $_POST['Masp']; // Mã sản phẩm
 $gia = $_POST['Gia'];    // Giá sản phẩm
 $soluong = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1; // Số lượng sản phẩm (mặc định là 1 nếu không có trong POST)
-$user = $_SESSION["user"]; // Tên người dùng từ session để liên kết đơn hàng với người dùng
-
+$user = isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin';
 // Kiểm tra xem người dùng đã có đơn đặt hàng chưa hoàn thành (chedo = 0) trong bảng dondathang
 $sql_check = "SELECT * FROM dondathang WHERE chedo = 0 AND nguoidathang = '$user'";
 $result = $con->query($sql_check);
-
 if ($result->num_rows == 0) { 
     // Nếu chưa có đơn hàng nào chưa hoàn thành, tạo đơn hàng mới
     $s_sohoadon = "SELECT MAX(sohoadon) as shd FROM dondathang";

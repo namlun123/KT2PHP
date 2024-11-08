@@ -1,3 +1,48 @@
+<?php
+        include("connect.inp");
+        session_start();
+        $user = isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin';
+
+        // Lấy dữ liệu giỏ hàng của người dùng
+        $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+            FROM sanpham 
+            INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
+            INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
+            WHERE chedo = 0 AND nguoidathang = '$user' ";
+        $result = $con->query($sql);
+        $result = $con->query($sql);
+
+        if ($result->num_rows > 0) {
+            echo "<form action='xldathang.php' method='post'>";
+            echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
+
+            $i = 1;    
+            while ($row = $result->fetch_assoc()) {
+                $thanhtien = $row['giaban'] * $row['soluong'];
+                echo "<tr>
+                    <td>$i</td>
+                    <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                    <td>{$row['tenhang']}</td>
+                    <td><img src='{$row['hinhanh']}' width='50'></td>
+                    <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
+                    <td id='gia$i'>{$row['giaban']}</td>
+                    <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
+                    <td><a href='xlxoagiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
+                </tr>";
+                $i++;
+            }
+            echo "</table>";
+            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
+            echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
+            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
+
+            echo "<input type='hidden' value='$i' name='slmahang'>";
+        } else {
+            echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+        }
+        $con->close();
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -203,51 +248,6 @@
     </script>
 </head>
 <body>
-    <?php
-        include("connect.inp");
-        session_start();
-        $user = isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin';
-
-        // Lấy dữ liệu giỏ hàng của người dùng
-        $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
-            FROM sanpham 
-            INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
-            INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
-            WHERE chedo = 0 AND nguoidathang = '$user' ";
-        $result = $con->query($sql);
-        $result = $con->query($sql);
-
-        if ($result->num_rows > 0) {
-            echo "<form action='xldathang.php' method='post'>";
-            echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
-
-            $i = 1;    
-            while ($row = $result->fetch_assoc()) {
-                $thanhtien = $row['giaban'] * $row['soluong'];
-                echo "<tr>
-                    <td>$i</td>
-                    <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
-                    <td>{$row['tenhang']}</td>
-                    <td><img src='{$row['hinhanh']}' width='50'></td>
-                    <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
-                    <td id='gia$i'>{$row['giaban']}</td>
-                    <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
-                    <td><a href='xlxoagiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
-                </tr>";
-                $i++;
-            }
-            echo "</table>";
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-            echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
-
-            echo "<input type='hidden' value='$i' name='slmahang'>";
-        } else {
-            echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
-        }
-        $con->close();
-    ?>
     <div id="dathang" style="margin-left: 20%">
         <h3>Thông tin giao hàng</h3>
         Người nhận hàng:<input type="text" name="nguoinhan" required><br>
@@ -308,11 +308,12 @@
         Địa chỉ:<input type="text" name="diachi" required><br>
         <label for="shippingCost">Phí vận chuyển:</label>
         <span id="shippingCost">0 VNĐ</span><br>
-
         <input type='hidden' name='vat' value="0">
         <input type='hidden' name='tongtien' value="0">
         <input type='hidden' name='shipping' value="0">
+        <form action="xldathang.php" method="post">
         <input type="submit" value="Đặt hàng">
+        </form>
     </div>
 </body>
 </html>

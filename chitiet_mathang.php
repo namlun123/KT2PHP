@@ -4,9 +4,9 @@ include("connect.inp");
 $masp = $_GET["Masp"];
 $sql = "SELECT * FROM sanpham WHERE mahang='$masp'";
 $result = $con->query($sql);
-$row = $result->fetch_assoc(); 
+$row = $result->fetch_assoc();
 $tensp = $row['tenhang'];
-?>
+?> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,16 +16,30 @@ $tensp = $row['tenhang'];
     <link rel="stylesheet" href="css/chitiet_mathang.css">
     <script>
         function showPopup(productName, quantity) {
-            document.getElementById('popup-message').innerText = 
+            document.getElementById('popup-message').innerText =
                 `Bạn đã thêm thành công ${quantity} sản phẩm "${productName}" vào giỏ hàng.`;
-            document.getElementById('popup-overlay').style.display = 'flex';
+            document.getElementById('popup-overlay').style.display = 'flex'; 
         }
+
         function closePopup() {
             document.getElementById('popup-overlay').style.display = 'none';
-            document.getElementById('quantity').value = ""; // Reset ô nhập số lượng về trống
+            document.getElementById('quantity').value = ""; 
         }
+
         function goToCart() {
             window.location.href = 'giohang.php';
+        }
+
+        function submitForm() {
+            var formData = new FormData(document.querySelector('form'));
+            fetch('xlthemgiohang.php', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    showPopup("<?php echo $tensp; ?>", document.getElementById('quantity').value);
+                }
+            });
         }
     </script>
 </head>
@@ -44,12 +58,11 @@ $tensp = $row['tenhang'];
                 <label>Số Lượng:</label>
                 <input type='number' name='quantity' min='1' required placeholder='Nhập số lượng' id='quantity'>
             </div>
-            <?php if (isset($_SESSION["user"])): ?>
-                <input type='submit' value='Thêm vào giỏ hàng'>
+            <?php if (isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin') : ?>
+           <input type='submit' value='Thêm vào giỏ hàng'>
             <?php endif; ?>
         </form>
         <a href='dssp.php' class='back-button'>Quay lại</a>
-        <!-- Popup hiển thị thông báo sau khi thêm vào giỏ hàng -->
         <div class="popup-overlay" id="popup-overlay">
             <div class="popup-content">
                 <p id="popup-message"></p>
@@ -60,18 +73,5 @@ $tensp = $row['tenhang'];
             </div>
         </div>
     </div>
-    <script>
-        function submitForm() {
-            var formData = new FormData(document.querySelector('form'));
-            fetch('xlthemgiohang.php', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    showPopup("<?php echo $tensp; ?>", document.getElementById('quantity').value);
-                }
-            });
-        }
-    </script>
 </body>
 </html>
