@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333433;
+}
+h3 {
+    text-align: center;
+    color: #555;
+}
+table {
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+img {
+    border-radius: 8px;
+}
+#tongtien, #VAT, #thanhTienTong {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #d9534f;
+}
+.summary {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+.summary div {
+    margin: 10px 0;
+}
+#dathang {
+    width: 70%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#dathang input[type="text"], #dathang select {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#dathang input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #24235f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+#dathang input[type="submit"]:hover {
+    background-color: #218838;
+}
+a {
+    color: #d9534f;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}

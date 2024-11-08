@@ -1,39 +1,105 @@
 <?php
-        include("connect.inp");
-        session_start();
-        $user = isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin';
 
-        // Lấy dữ liệu giỏ hàng của người dùng
-        $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+include("connect.inp");
+session_start();
+
+// Kiểm tra nếu người dùng đã đăng nhập
+if (isset($_SESSION["user"])) {
+    // Nếu người dùng đã đăng nhập, lấy tên người dùng từ session
+    $user = $_SESSION["user"];
+    echo "Xin chào, " . $user . "!";
+} else {
+    // Nếu chưa đăng nhập, hiển thị thông báo
+    echo "Bạn chưa đăng nhập.";
+}
+
+// Lấy dữ liệu giỏ hàng của người dùng
+if (isset($_SESSION["user"])) {
+    // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
             FROM sanpham 
             INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
             INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
             WHERE chedo = 0 AND nguoidathang = '$user' ";
-        $result = $con->query($sql);
-        $result = $con->query($sql);
+    $result = $con->query($sql);
 
-        if ($result->num_rows > 0) {
+    if ($result->num_rows > 0) {
+        echo "<form action='xldathang.php' method='post'>";
+        echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
+
+        $i = 1;
+        while ($row = $result->fetch_assoc()) {
+            $thanhtien = $row['giaban'] * $row['soluong'];
+            echo "<tr>
+                <td>$i</td>
+                <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                <td>{$row['tenhang']}</td>
+                <td><img src='{$row['hinhanh']}' width='50'></td>
+                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
+                <td id='gia$i'>{$row['giaban']}</td>
+                <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
+                <td><a href='xlxoagiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
+            </tr>";
+            $i++;
+        }
+        echo "</table>";
+        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
+        echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
+        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
+
+        echo "<input type='hidden' value='$i' name='slmahang'>";
+    } else {
+        echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+    }
+} else {
+    // Nếu người dùng chưa đăng nhập, lấy giỏ hàng từ session
+    if (isset($_SESSION['cart'])) {
+        $cart = $_SESSION['cart'];
+        if (count($cart) > 0) {
             echo "<form action='xldathang.php' method='post'>";
             echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
-            $i = 1;    
-            while ($row = $result->fetch_assoc()) {
-                $thanhtien = $row['giaban'] * $row['soluong'];
+            $i = 1;
+            foreach ($cart as $item) {
+                // Lấy mã hàng từ giỏ hàng
+                $mahang = $item['mahang'];
+
+                // Truy vấn cơ sở dữ liệu để lấy thông tin tên sản phẩm và hình ảnh
+                $sql_product = "SELECT tenhang, hinhanh FROM sanpham WHERE mahang = '$mahang'";
+                $result_product = $con->query($sql_product);
+
+                if ($result_product && $result_product->num_rows > 0) {
+                    // Lấy thông tin sản phẩm từ cơ sở dữ liệu
+                    $product = $result_product->fetch_assoc();
+                    $tenhang = $product['tenhang'];
+                    $hinhanh = $product['hinhanh'];
+                } else {
+                    // Nếu không tìm thấy, gán giá trị mặc định
+                    $tenhang = 'Tên sản phẩm không có';
+                    $hinhanh = 'path/to/default/image.jpg';
+                }
+
+                // Tính thành tiền cho mỗi sản phẩm trong giỏ hàng
+                $thanhtien = $item['giaban'] * $item['soluong'];
+
+                // Hiển thị thông tin sản phẩm trong bảng
                 echo "<tr>
-                    <td>$i</td>
-                    <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
-                    <td>{$row['tenhang']}</td>
-                    <td><img src='{$row['hinhanh']}' width='50'></td>
-                    <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
-                    <td id='gia$i'>{$row['giaban']}</td>
-                    <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
-                    <td><a href='xlxoagiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
-                </tr>";
+                <td>$i</td>
+                <td>{$item['mahang']}<input type='hidden' value='{$item['mahang']}' name='mahang$i'></td>
+                <td>$tenhang</td>
+                <td><img src='image/{$hinhanh}' width='50'></td>
+                <td><input type='number' id='soluong$i' value='{$item['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
+                <td id='gia$i'>{$item['giaban']}</td>
+                <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
+                <td><a href='xlxoagiohang.php?mahang={$item['mahang']}' onclick='return ktraxoa();'>Xóa</a></td>
+                 </tr>";
+            
                 $i++;
             }
             echo "</table>";
             echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-            echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+            echo "<script>tinhTongTien();</script>";
             echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
             echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
 
@@ -41,97 +107,26 @@
         } else {
             echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         }
-        $con->close();
-    ?>
+    } else {
+        echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+    }
+}
+
+$con->close();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng</title>
+    <link rel="stylesheet" href="css/giohang.css">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333433;
-        }
-        h3 {
-            text-align: center;
-            color: #555;
-        }
-        table {
-            width: 70%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-weight: bold;
-            text-align: center;
-        }
-        td {
-            text-align: center;
-            vertical-align: middle;
-        }
-        img {
-            border-radius: 8px;
-        }
-        #tongtien, #VAT, #thanhTienTong {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #d9534f;
-        }
-        .summary {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        .summary div {
-            margin: 10px 0;
-        }
-        #dathang {
-            width: 70%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        #dathang input[type="text"], #dathang select {
-            width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        #dathang input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #dathang input[type="submit"]:hover {
-            background-color: #218838;
-        }
-        a {
-            color: #d9534f;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
+        
     </style>
     <script>
         // Hàm xác nhận xóa

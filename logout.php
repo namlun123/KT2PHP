@@ -5,5 +5,5 @@
         session_destroy();
         
     }
-    header("location:trangchu.php");
+    header("location:index.php");
 ?>

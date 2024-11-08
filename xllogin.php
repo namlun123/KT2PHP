@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["user"] = $row["tentaikhoan"];
             $_SESSION["permiss"] = $row["quyen"];
             
-            header("location:trangchu.php");
+            header("location:index.php");
             exit();
         } else {
             // Nếu mật khẩu sai hoặc tài khoản không hoạt động

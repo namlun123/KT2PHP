@@ -12,11 +12,26 @@
         <header>
             <h1>THƯƠNG MẠI ĐIỆN TỬ</h1>
             <nav>
-                <a href="#">Trang chủ</a>
-                <a href="giohang.php">Giỏ hàng</a>
-                <a href="#">Liên hệ</a>
-                <a href="#">Góp ý</a>
-                <a href="#">Hỏi đáp</a>
+                <a href="index.php" class="nav-link">Trang chủ</a>
+                <a href="giohang.php" class="nav-link">Giỏ hàng</a>
+
+                <?php
+                session_start();
+                
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                if (isset($_SESSION["user"])) {
+                    // Hiển thị thêm mục "Quản lý người dùng" nếu user có quyền quản trị (permiss == 1)
+                    if ($_SESSION["permiss"] == 1) {
+                        echo "<a href='#' class='nav-link'>Quản lý người dùng</a>";
+                    }
+
+                    // Các liên kết cho người dùng đã đăng nhập
+                    echo "<a href='dssp.php' class='nav-link'>Quản lý sản phẩm</a>";
+                    echo "<span class='welcome-text'>Xin chào, {$_SESSION['user']}</span>";
+                    echo "<a href='cart.php' class='nav-link cart'><i class='fas fa-shopping-cart'></i></a>";
+                    echo "<a href='logout.php' class='nav-link logout'>Đăng xuất</a>";
+                } 
+                ?>
             </nav>
         </header>
 
@@ -53,10 +68,10 @@
                         // Hiển thị từng sản phẩm dưới dạng thẻ
                         while ($row = $result->fetch_assoc()) {
                             echo "<div class='product-card'>
-                                    <img src='images/{$row['hinhanh']}' alt='{$row['tenhang']}'>
+                                    <img src='image/{$row['hinhanh']}' alt='{$row['tenhang']}'>
                                     <p>{$row['giahang']} VND</p>
                                     <p>{$row['tenhang']}</p>
-                        <td class='actions'><a href='chitiet_mathang.php?Masp={$row['mahang']}' class='details-btn'>Chi tiết</a></td>
+                                    <td class='actions'><a href='chitiet_mathang.php?Masp={$row['mahang']}' class='details-btn'>Chi tiết</a></td>
                                   </div>";
                         }
                     } else {
@@ -104,5 +119,6 @@
             </aside>
         </main>
     </div>
+    
 </body>
 </html>
