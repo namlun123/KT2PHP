@@ -97,26 +97,28 @@
 
             <!-- Sidebar Đăng nhập -->
             <aside class="sidebar">
-                <div class="login">
-                    <h2>Tài khoản</h2>
-                    <form method="POST" action="xllogin.php" class="login-form">
-                    <input type="text" id="user" name="user" placeholder="Tên đăng nhập">
-                        <input type="password" id="pass" name="pass" placeholder="Mật khẩu">
-                        <button>Đăng nhập</button>
-                    </form>
-                    
-                </div>
+                    <!-- Kiểm tra nếu người dùng chưa đăng nhập thì hiển thị form đăng nhập -->
+                    <?php if (!isset($_SESSION["user"])): ?>
+                        <div class="login">
+                            <h2>Tài khoản</h2>
+                            <form method="POST" action="xllogin.php" class="login-form">
+                                <input type="text" id="user" name="user" placeholder="Tên đăng nhập">
+                                <input type="password" id="pass" name="pass" placeholder="Mật khẩu">
+                                <button>Đăng nhập</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
 
-                <div class="category">
-                    <h3>Danh mục</h3>
-                    <ul>
-                        <li>Áo</li>
-                        <li>Quần</li>
-                        <li>Váy</li>
-                        <li>Tất</li>
-                    </ul>
-                </div>
-            </aside>
+                    <div class="category">
+                        <h3>Danh mục</h3>
+                        <ul>
+                            <li>Áo</li>
+                            <li>Quần</li>
+                            <li>Váy</li>
+                            <li>Tất</li>
+                        </ul>
+                    </div>  
+                </aside>
         </main>
     </div>
     
