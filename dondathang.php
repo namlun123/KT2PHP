@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đơn Đặt Hàng</title>
     <link rel="stylesheet" href="css/dondathang.css">
+    <link rel="stylesheet" href="css/giohang.css">
 </head>
 <body>
 <?php
@@ -101,7 +102,9 @@ if ($result->num_rows > 0) {
 } else {
     echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
 }
-
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
+        echo "</div>";
 $con->close();
 ?>
 </body>

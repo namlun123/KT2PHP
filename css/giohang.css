@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Cambria, Georgia, Times, 'Times New Roman', serif;
     background-color: #f9f9f9;
     color: #333433;
 }
@@ -71,7 +71,7 @@ img {
     transition: background-color 0.3s;
 }
 #dathang input[type="submit"]:hover {
-    background-color: #218838;
+    background-color: #65698d;
 }
 a {
     color: #d9534f;
@@ -79,4 +79,24 @@ a {
 }
 a:hover {
     text-decoration: underline;
+}
+.continue-shopping-btn {
+    padding: 10px 20px;
+    background-color: #24235f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.continue-shopping-btn:hover {
+    background-color: #65698d;
+}
+
+.continue-shopping-btn:active {
+    background-color: #3e8e41;
+    transform: scale(0.98);
 }

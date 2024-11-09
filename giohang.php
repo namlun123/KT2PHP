@@ -43,13 +43,12 @@ if (isset($_SESSION["user"])) {
             $i++;
         }
         echo "</table>";
-        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-        echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
-        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
-        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
-        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
 
-        echo "<input type='hidden' value='$i' name='slmahang'>";
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
+        echo "</div>";
+
+       
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
     }
@@ -99,6 +98,23 @@ if (isset($_SESSION["user"])) {
                 $i++;
             }
             echo "</table>";
+
+            // Thông tin giao hàng
+            echo "<div id='dathang' style='margin-left: 20%'>";
+            echo "<h3>Thông tin giao hàng</h3>";
+            echo "Người nhận hàng:<input type='text' name='nguoinhan' required><br>";
+            echo "<label for='province'>Tỉnh/Thành phố:</label>";
+            echo "<select id='province' name='province' onchange='calculateShipping()' required>
+                    <option value=''>Chọn tỉnh/thành phố</option>
+                    <option value='Hà Nội'>Hà Nội</option>
+                    <!-- Các tùy chọn tỉnh khác ở đây -->
+                </select><br>";
+            echo "Địa chỉ:<input type='text' name='diachi' required><br>";
+            echo "Số điện thoại:<input type='text' name='sdt' required><br>";
+            echo "<input type='submit' value='Đặt hàng'>";
+            echo "</div>";
+
+            // Tính tổng tiền và các phần khác
             echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
             echo "<script>tinhTongTien();</script>";
             echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
@@ -315,5 +331,16 @@ $con->close();
         <input type="submit" value="Đặt hàng">
         </form>
     </div>
+    <?php
+     echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
+     echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+     echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
+     echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
+     echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
+     //echo "<input type='hidden' value='$i' name='slmahang'>";
+     ?>
 </body>
 </html>
+
+
+
