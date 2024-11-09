@@ -196,6 +196,7 @@ $con->close();
                 case "Đà Nẵng":
                 case "Bình Định":
                 case "Hà Tĩnh":
+                case "Thanh Hóa":
                 case "Khánh Hòa":
                 case "Nghệ An":
                 case "Ninh Thuận":
@@ -224,6 +225,7 @@ $con->close();
                 case "Lâm Đồng":
                 case "Sóc Trăng":
                 case "Tây Ninh":
+                case "Long An":
                 case "Tiền Giang":
                 case "Trà Vinh":
                 case "Vĩnh Long":
@@ -302,6 +304,8 @@ $con->close();
             <option value="Yên Bái">Yên Bái</option>
         </select><br>
         Địa chỉ:<input type="text" name="diachi" required><br>
+        Số điện thoại:<input type="text" name="sdt" required><br>
+
         <!-- <label for="shippingCost">Phí vận chuyển:</label>
         <span id="shippingCost">0 VNĐ</span><br> -->
         <input type='hidden' name='vat' value="0">
