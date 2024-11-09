@@ -13,6 +13,11 @@ if (isset($_SESSION["user"])) {
     echo "Bạn chưa đăng nhập.";
 }
 
+if (isset($_SESSION['message'])) {
+    echo "<script>alert('" . $_SESSION['message'] . "');</script>";
+    unset($_SESSION['message']); // Xóa thông báo sau khi hiển thị
+}
+
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
@@ -34,20 +39,20 @@ if (isset($_SESSION["user"])) {
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
                 <td>{$row['tenhang']}</td>
-                <td><img src='{$row['hinhanh']}' width='50'></td>
+                <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
-                <td><a href='xlxoagiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
+                <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
             </tr>";
             $i++;
         }
         echo "</table>";
 
         echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
         echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
         echo "</div>";
-
        
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
@@ -92,12 +97,17 @@ if (isset($_SESSION["user"])) {
                 <td><input type='number' id='soluong$i' value='{$item['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
                 <td id='gia$i'>{$item['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
-                <td><a href='xlxoagiohang.php?mahang={$item['mahang']}' onclick='return ktraxoa();'>Xóa</a></td>
+                <td><a href='xlxoaspgiohang.php?mahang={$item['mahang']}' onclick='return ktraxoa();'>Xóa</a></td>
                  </tr>";
             
                 $i++;
             }
             echo "</table>";
+
+            echo "<div style='text-align: center; margin-top: 20px;'>";
+            echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
+            echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
+            echo "</div>";
 
             // Thông tin giao hàng
             echo "<div id='dathang' style='margin-left: 20%'>";

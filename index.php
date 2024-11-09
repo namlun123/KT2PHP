@@ -18,6 +18,11 @@
                 <?php
                 session_start();
                 
+                if (isset($_SESSION["error_message"])) {
+                    echo "<script>alert('" . $_SESSION["error_message"] . "');</script>";
+                    unset($_SESSION["error_message"]); // Xóa thông báo lỗi sau khi hiển thị
+                }
+                
                 // Kiểm tra xem người dùng đã đăng nhập chưa
                 if (isset($_SESSION["user"])) {
                     // Hiển thị thêm mục "Quản lý người dùng" nếu user có quyền quản trị (permiss == 1)

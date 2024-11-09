@@ -19,9 +19,20 @@
         <?php
             if (isset($_GET['status'])) {
                 if ($_GET['status'] == 1) {
-                    echo "<span id='tb' style='display:none'>Thêm thành công</span>";
-                } else {
-                    echo "<span id='tb' style='display:none'>Lỗi thêm</span>";
+                    // Thông báo thêm thành công
+                    echo "<script>alert('Thêm sản phẩm thành công.');</script>";
+                } elseif ($_GET['status'] == 0) {
+                    // Thông báo lỗi thêm
+                    echo "<script>alert('Lỗi khi thêm sản phẩm.');</script>";
+                } elseif ($_GET['status'] == 2) {
+                    // Thông báo lỗi xóa
+                    echo "<script>alert('Lỗi xóa sản phẩm.');</script>";
+                } elseif ($_GET['status'] == 3) {
+                    // Thông báo xóa thành công
+                    echo "<script>alert('Sản phẩm đã được xóa thành công.');</script>";
+                } elseif ($_GET['status'] == 4) {
+                    // Thông báo không có quyền xóa
+                    echo "<script>alert('Bạn không có quyền xóa sản phẩm.');</script>";
                 }
             }
 
@@ -35,7 +46,7 @@
             $page = isset($_GET["page"]) ? $_GET["page"] : 1;
             $offset = ($page - 1) * $each_record;
 
-            $sql = "SELECT * FROM Sanpham LIMIT $each_record OFFSET $offset";
+            $sql = "SELECT * FROM Sanpham WHERE is_deleted = 0 LIMIT $each_record OFFSET $offset";
             $result = $con->query($sql);
 
             if ($result->num_rows > 0) {
@@ -62,7 +73,7 @@
                     <td>{$row['giahang']}</td>
                     <td class='actions'><a href='chitiet_mathang.php?Masp={$row['mahang']}' class='details-btn'>Chi tiết</a></td>
                     <td class='actions'><a href='suasp.php?Masp={$row['mahang']}' class='edit-btn'><i class='fas fa-edit'></i></a></td>
-                    <td class='actions'><a href='xoaLoai.php?Masp={$row['mahang']}' class='delete-btn' onclick='return ktraxoa();'><i class='fas fa-trash-alt'></i></a></td>
+                    <td class='actions'><a href='xoasp.php?Masp={$row['mahang']}' class='delete-btn' onclick='return ktraxoa();'><i class='fas fa-trash-alt'></i></a></td>
                     </tr>";
                     $i++;
 
