@@ -61,7 +61,7 @@
                     <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                     <td>{$row['giahang']}</td>
                     <td class='actions'><a href='chitiet_mathang.php?Masp={$row['mahang']}' class='details-btn'>Chi tiết</a></td>
-                    <td class='actions'><a href='suaLoai.php?Masp={$row['mahang']}' class='edit-btn'><i class='fas fa-edit'></i></a></td>
+                    <td class='actions'><a href='suasp.php?Masp={$row['mahang']}' class='edit-btn'><i class='fas fa-edit'></i></a></td>
                     <td class='actions'><a href='xoaLoai.php?Masp={$row['mahang']}' class='delete-btn' onclick='return ktraxoa();'><i class='fas fa-trash-alt'></i></a></td>
                     </tr>";
                     $i++;
