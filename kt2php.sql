@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2024 at 10:23 AM
+-- Generation Time: Nov 09, 2024 at 03:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -71,6 +71,7 @@ CREATE TABLE `dondathang` (
   `ngaythanhtoan` date NOT NULL,
   `nguoinhanhang` varchar(50) NOT NULL,
   `diachinhanhang` varchar(100) NOT NULL,
+  `thanhpho` varchar(50) NOT NULL,
   `sodienthoai` varchar(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -78,14 +79,14 @@ CREATE TABLE `dondathang` (
 -- Dumping data for table `dondathang`
 --
 
-INSERT INTO `dondathang` (`sohoadon`, `ngaychonhang`, `nguoidathang`, `chedo`, `ngaydathang`, `ngaythanhtoan`, `nguoinhanhang`, `diachinhanhang`, `sodienthoai`) VALUES
-(1, '0000-00-00', 'nguyen thi hoa', 1, '0000-00-00', '0000-00-00', '', 'ha oi', 'sfdaf'),
-(2, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'Tráº§n thá»‹ bÃ¬nh', '37 Phan Huy ChÃº', '0253243543'),
-(3, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'Tráº§n thá»‹ bÃ¬nh', '37 Phan Huy ChÃº', '0253243543'),
-(4, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', '', '', ''),
-(5, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'trang', '23424', '53543'),
-(6, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'lan', '34 hhoangf mai', '875755565'),
-(7, '0000-00-00', 'admin', 0, '0000-00-00', '0000-00-00', '', '', '');
+INSERT INTO `dondathang` (`sohoadon`, `ngaychonhang`, `nguoidathang`, `chedo`, `ngaydathang`, `ngaythanhtoan`, `nguoinhanhang`, `diachinhanhang`, `thanhpho`, `sodienthoai`) VALUES
+(1, '0000-00-00', 'nguyen thi hoa', 1, '0000-00-00', '0000-00-00', '', 'ha oi', '', 'sfdaf'),
+(2, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'Tráº§n thá»‹ bÃ¬nh', '37 Phan Huy ChÃº', '', '0253243543'),
+(3, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'Tráº§n thá»‹ bÃ¬nh', '37 Phan Huy ChÃº', '', '0253243543'),
+(4, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', '', '', '', ''),
+(5, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'trang', '23424', '', '53543'),
+(6, '0000-00-00', 'admin', 1, '0000-00-00', '0000-00-00', 'lan', '34 hhoangf mai', '', '875755565'),
+(7, '0000-00-00', 'admin', 0, '0000-00-00', '0000-00-00', '', '', '', '');
 
 -- --------------------------------------------------------
 

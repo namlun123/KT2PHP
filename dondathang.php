@@ -3,72 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        table{
-            width:70%;
-            margin-left:15%;
-        }
-        table,tr,td{
-            border:1px solid;
-        }
-    </style>
+    <title>Đơn Đặt Hàng</title>
+    <link rel="stylesheet" href="css/dondathang.css">
 </head>
-
 <body>
-    <script>
-        function tinhtien(){
-            var gia=document.getElementById("gia").innerHTML();
-            var soluong=document.getElementById("soluong").innerHTML();
-            document.getElementById("gia").innerHTML(gia*soluong);
-        }
-    </script>
-    <?php
-        include("connect.inp");
-        session_start();
-        $user='admin';
-        if (isset($_SESSION["user"]))
-            $user=$_SESSION["user"];
-        
-        //Xây dựng câu lệnh truy vấn lấy dữ liệu chi tiết đặt hàng
-        $sql="SELECT chitietdathang.sohoadon,chitietdathang.mahang,tenhang,hinhanh,giaban,chitietdathang.soluong FROM sanpham inner join chitietdathang on sanpham.mahang=chitietdathang.mahang
-        inner join dondathang on 
-        dondathang.sohoadon=chitietdathang.sohoadon
-         WHERE chedo=1 and nguoidathang='$user' ";
-        echo $sql;
-        //thực thi sql
-        $result=$con->query($sql);
-        //Đọc duyệt kết quả
-        if($result->num_rows>0){
-            //tạo một bảng
-            //echo "Mã giỏ hàng: {$row['Sohoadon']} <br>";
-            
-            echo"<table><tr><td>Sohoadon</td><td>Mã hàng</td><td> 
-            Tên hàng</td><td>Hình ảnh</td><td>Số lượng </td> <td> Giá bán</td><td>Thành tiền
-            </td><td>Xóa</td></tr>"; 
-            $i=1;    
-            while($row=$result->fetch_assoc())
-            {
-                echo "<tr>
-                <td>{$row['sohoadon']}</td>
-                <td >{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
-                <td>{$row['tenhang']}</td>
-                <td>{$row['hinhanh']} </td>
-                <td id='soluong'>
-                {$row['soluong']}</td> 
-                <td id='gia'>{$row['giaban']}
-                </td>
-                <td id='thanhtien'></td>
-                <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td></tr>";
-                 $i=$i+1;
-            } 
-            echo "</table>"; 
-            echo "<input type='hidden' value='$i' name='slmahang'>";
-   
-        }//if đúng
-        
-        $con->close();
-    ?>
+<?php
+include("connect.inp");
+session_start();
+$user = $_SESSION["user"] ?? 'admin';
+
+$sql = "SELECT dondathang.sohoadon, dondathang.thanhpho, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+        FROM sanpham 
+        INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
+        INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
+        WHERE dondathang.chedo = 1 AND dondathang.nguoidathang = '$user'
+        ORDER BY chitietdathang.sohoadon";
+
+$result = $con->query($sql);
+
+if ($result->num_rows > 0) {
+    echo "<table>";
+    echo "<tr><th>Sohoadon</th><th>Mã hàng</th><th>Tên hàng</th><th>Hình ảnh</th><th>Số lượng</th><th>Giá bán</th><th>Thành tiền</th><th>VAT</th><th>Phí vận chuyển</th><th>Tổng thanh toán</th><th>Xóa</th></tr>";
+
+    $currentSohoadon = null;
+    $tongTienHang = 0;
+    $province = '';
     
+    function calculateShipping($province) {
+        switch ($province) {
+            case "Hà Nội":
+                return 30000;
+            case "Hà Giang": case "Hà Nam": case "Hải Dương": case "Hải Phòng": case "Hòa Bình": case "Hưng Yên": case "Lai Châu": case "Lạng Sơn": case "Ninh Bình": case "Phú Thọ": case "Quảng Ninh": case "Sơn La": case "Thái Bình": case "Thái Nguyên": case "Tuyên Quang": case "Yên Bái":
+                return 40000;
+            case "Đà Nẵng": case "Bình Định": case "Thanh Hóa": case "Hà Tĩnh": case "Khánh Hòa": case "Nghệ An": case "Ninh Thuận": case "Phú Yên": case "Quảng Bình": case "Quảng Nam": case "Quảng Ngãi": case "Quảng Trị": case "Thừa Thiên Huế": case "Vĩnh Phúc":
+                return 45000;
+            case "An Giang": case "Bà Rịa - Vũng Tàu": case "Bạc Liêu": case "Bến Tre": case "Bình Dương": case "Bình Phước": case "Cà Mau": case "Cần Thơ": case "Long An": case "Đắk Lắk": case "Đắk Nông": case "Gia Lai": case "Kiên Giang": case "Kon Tum": case "Lâm Đồng": case "Sóc Trăng": case "Tây Ninh": case "Tiền Giang": case "Trà Vinh": case "Vĩnh Long":
+                return 50000;
+            default:
+                return 0;
+        }
+    }
+
+    while ($row = $result->fetch_assoc()) {
+        if ($currentSohoadon !== $row['sohoadon']) {
+            if ($currentSohoadon !== null) {
+                $VAT = $tongTienHang * 0.1;
+                $phiShip = calculateShipping($province);
+                $tongThanhToan = $tongTienHang + $VAT + $phiShip;
+
+                echo "<tr style='font-weight: bold; background-color: #f9f9f9;'>
+                        <td colspan='6' style='text-align: right;'>Tổng cộng hóa đơn $currentSohoadon:</td>
+                        <td>" . number_format($tongTienHang, 0, ',', '.') . " VNĐ</td>
+                        <td>" . number_format($VAT, 0, ',', '.') . " VNĐ</td>
+                        <td>" . number_format($phiShip, 0, ',', '.') . " VNĐ</td>
+                        <td>" . number_format($tongThanhToan, 0, ',', '.') . " VNĐ</td>
+                        <td></td>
+                      </tr>";
+
+                $tongTienHang = 0;
+            }
+            $currentSohoadon = $row['sohoadon'];
+            $province = $row['thanhpho'];
+        }
+
+        $thanhTien = $row['giaban'] * $row['soluong'];
+        $tongTienHang += $thanhTien;
+
+        echo "<tr>
+            <td>{$row['sohoadon']}</td>
+            <td>{$row['mahang']}</td>
+            <td>{$row['tenhang']}</td>
+            <td><img src='{$row['hinhanh']}' width='50'></td>
+            <td>{$row['soluong']}</td>
+            <td>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
+            <td>" . number_format($thanhTien, 0, ',', '.') . " VNĐ</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
+        </tr>";
+    }
+
+    $VAT = $tongTienHang * 0.1;
+    $phiShip = calculateShipping($province);
+    $tongThanhToan = $tongTienHang + $VAT + $phiShip;
+
+    echo "<tr style='font-weight: bold; background-color: #f9f9f9;'>
+            <td colspan='6' style='text-align: right;'>Tổng cộng hóa đơn $currentSohoadon:</td>
+            <td>" . number_format($tongTienHang, 0, ',', '.') . " VNĐ</td>
+            <td>" . number_format($VAT, 0, ',', '.') . " VNĐ</td>
+            <td>" . number_format($phiShip, 0, ',', '.') . " VNĐ</td>
+            <td>" . number_format($tongThanhToan, 0, ',', '.') . " VNĐ</td>
+            <td></td>
+          </tr>";
+
+    echo "</table>";
+} else {
+    echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+}
+
+$con->close();
+?>
 </body>
 </html>

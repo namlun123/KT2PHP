@@ -46,6 +46,7 @@ if (isset($_SESSION["user"])) {
         echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
         echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
         echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
+        echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
         echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
 
         echo "<input type='hidden' value='$i' name='slmahang'>";
@@ -195,6 +196,7 @@ $con->close();
                 case "Đà Nẵng":
                 case "Bình Định":
                 case "Hà Tĩnh":
+                case "Thanh Hóa":
                 case "Khánh Hòa":
                 case "Nghệ An":
                 case "Ninh Thuận":
@@ -223,6 +225,7 @@ $con->close();
                 case "Lâm Đồng":
                 case "Sóc Trăng":
                 case "Tây Ninh":
+                case "Long An":
                 case "Tiền Giang":
                 case "Trà Vinh":
                 case "Vĩnh Long":
@@ -301,8 +304,10 @@ $con->close();
             <option value="Yên Bái">Yên Bái</option>
         </select><br>
         Địa chỉ:<input type="text" name="diachi" required><br>
-        <label for="shippingCost">Phí vận chuyển:</label>
-        <span id="shippingCost">0 VNĐ</span><br>
+        Số điện thoại:<input type="text" name="sdt" required><br>
+
+        <!-- <label for="shippingCost">Phí vận chuyển:</label>
+        <span id="shippingCost">0 VNĐ</span><br> -->
         <input type='hidden' name='vat' value="0">
         <input type='hidden' name='tongtien' value="0">
         <input type='hidden' name='shipping' value="0">
