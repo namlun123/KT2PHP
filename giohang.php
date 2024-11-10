@@ -3,6 +3,9 @@
 include("connect.inp");
 session_start();
 
+// Lấy session ID (không cần phải gán user là "guest")
+$sessionID = session_id();
+
 // Kiểm tra nếu người dùng đã đăng nhập
 if (isset($_SESSION["user"])) {
     // Nếu người dùng đã đăng nhập, lấy tên người dùng từ session
@@ -53,6 +56,7 @@ if (isset($_SESSION["user"])) {
         echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
         echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
         echo "</div>";
+        echo "<input type='hidden' value='$i' name='slmahang'>";
        
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
@@ -108,29 +112,8 @@ if (isset($_SESSION["user"])) {
             echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
             echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
             echo "</div>";
-
-            // Thông tin giao hàng
-            echo "<div id='dathang' style='margin-left: 20%'>";
-            echo "<h3>Thông tin giao hàng</h3>";
-            echo "Người nhận hàng:<input type='text' name='nguoinhan' required><br>";
-            echo "<label for='province'>Tỉnh/Thành phố:</label>";
-            echo "<select id='province' name='province' onchange='calculateShipping()' required>
-                    <option value=''>Chọn tỉnh/thành phố</option>
-                    <option value='Hà Nội'>Hà Nội</option>
-                    <!-- Các tùy chọn tỉnh khác ở đây -->
-                </select><br>";
-            echo "Địa chỉ:<input type='text' name='diachi' required><br>";
-            echo "Số điện thoại:<input type='text' name='sdt' required><br>";
-            echo "<input type='submit' value='Đặt hàng'>";
-            echo "</div>";
-
-            // Tính tổng tiền và các phần khác
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-            echo "<script>tinhTongTien();</script>";
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
-            echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
-
             echo "<input type='hidden' value='$i' name='slmahang'>";
+
         } else {
             echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         }
@@ -347,7 +330,6 @@ $con->close();
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
-     //echo "<input type='hidden' value='$i' name='slmahang'>";
      ?>
 </body>
 </html>

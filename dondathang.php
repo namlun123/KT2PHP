@@ -11,14 +11,20 @@
 <?php
 include("connect.inp");
 session_start();
-$user = $_SESSION["user"] ?? 'admin';
-
+if (isset($_SESSION["user"])) {
+    $user = $_SESSION["user"];
+} else {
+    // Người dùng chưa đăng nhập, sử dụng session ID
+    $user = session_id();
+}
 $sql = "SELECT dondathang.sohoadon, dondathang.thanhpho, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
         FROM sanpham 
         INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
         INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
         WHERE dondathang.chedo = 1 AND dondathang.nguoidathang = '$user'
         ORDER BY chitietdathang.sohoadon";
+        
+echo $sql;
 
 $result = $con->query($sql);
 
@@ -74,9 +80,9 @@ if ($result->num_rows > 0) {
             <td>{$row['sohoadon']}</td>
             <td>{$row['mahang']}</td>
             <td>{$row['tenhang']}</td>
-            <td><img src='{$row['hinhanh']}' width='50'></td>
-            <td>{$row['soluong']}</td>
-            <td>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
+            <td><img src='image/{$row['hinhanh']}' width='50'></td>
+            <td id='soluong'>{$row['soluong']}</td>
+            <td name = 'giaban'>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
             <td>" . number_format($thanhTien, 0, ',', '.') . " VNĐ</td>
             <td>-</td>
             <td>-</td>
@@ -84,7 +90,12 @@ if ($result->num_rows > 0) {
             <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
         </tr>";
     }
-
+    if(isset($row['giaban']) && !empty($row['giaban'])) {
+        echo $row['giaban'];
+    } else {
+        echo "Không thể hiển thị giá bán";
+    }
+    
     $VAT = $tongTienHang * 0.1;
     $phiShip = calculateShipping($province);
     $tongThanhToan = $tongTienHang + $VAT + $phiShip;
