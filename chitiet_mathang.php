@@ -6,6 +6,7 @@ $sql = "SELECT * FROM sanpham WHERE mahang='$masp'";
 $result = $con->query($sql);
 $row = $result->fetch_assoc();
 $tensp = $row['tenhang'];
+$soluong_tonkho = $row['soluong'];
 ?> 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,33 +16,59 @@ $tensp = $row['tenhang'];
     <title>Chi Tiết Sản Phẩm</title>
     <link rel="stylesheet" href="css/chitiet_mathang.css">
     <script>
-        function showPopup(productName, quantity) {
-            document.getElementById('popup-message').innerText =
-                `Bạn đã thêm thành công ${quantity} sản phẩm "${productName}" vào giỏ hàng.`;
-            document.getElementById('popup-overlay').style.display = 'flex'; 
+    function checkQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        const maxQuantity = <?php echo $soluong_tonkho; ?>;
+        const warningMessage = document.getElementById('quantity-warning');
+        
+        if (quantityInput.value > maxQuantity) {
+            warningMessage.style.display = 'block';
+            warningMessage.innerText = `Hiện trong kho chỉ còn ${maxQuantity}! Bạn vui lòng chọn ít hơn.`;
+            quantityInput.value = maxQuantity; // Giới hạn lại số lượng
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    }
+
+    function showPopup(productName, quantity) {
+        document.getElementById('popup-message').innerText =
+            `Bạn đã thêm thành công ${quantity} sản phẩm "${productName}" vào giỏ hàng.`;
+        document.getElementById('popup-overlay').style.display = 'flex'; 
+    }
+
+    function closePopup() {
+        document.getElementById('popup-overlay').style.display = 'none';
+        document.getElementById('quantity').value = ""; 
+    }
+
+    function goToCart() {
+        window.location.href = 'giohang.php';
+    }
+
+    function submitForm() {
+        const quantityInput = document.getElementById('quantity');
+        const maxQuantity = <?php echo $soluong_tonkho; ?>;
+        
+        // Kiểm tra lại số lượng nhập vào trước khi gửi yêu cầu
+        if (quantityInput.value > maxQuantity) {
+            document.getElementById('quantity-warning').innerText = 
+                `Hiện trong kho chỉ còn ${maxQuantity}! Bạn vui lòng chọn ít hơn.`;
+            document.getElementById('quantity-warning').style.display = 'block';
+            return; // Dừng lại nếu số lượng không hợp lệ
         }
 
-        function closePopup() {
-            document.getElementById('popup-overlay').style.display = 'none';
-            document.getElementById('quantity').value = ""; 
-        }
-
-        function goToCart() {
-            window.location.href = 'giohang.php';
-        }
-
-        function submitForm() {
-            var formData = new FormData(document.querySelector('form'));
-            fetch('xlthemgiohang.php', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    showPopup("<?php echo $tensp; ?>", document.getElementById('quantity').value);
-                }
-            });
-        }
-    </script>
+        // Gửi yêu cầu nếu số lượng hợp lệ
+        const formData = new FormData(document.querySelector('form'));
+        fetch('xlthemgiohang.php', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                showPopup("<?php echo $tensp; ?>", quantityInput.value);
+            }
+        });
+    }
+</script>
 </head>
 <body>
     <div class="container">
@@ -56,8 +83,9 @@ $tensp = $row['tenhang'];
             </div>
             <div class='quantity'>
                 <label>Số Lượng:</label>
-                <input type='number' name='quantity' min='1' required placeholder='Nhập số lượng' id='quantity'>
+                <input type="number" name="quantity" min="1" max="<?php echo $soluong_tonkho; ?>" required placeholder="Nhập số lượng" id="quantity" oninput="checkQuantity()">
             </div>
+            <p id="quantity-warning" style="color: red; display: none;"></p>
             <?php if (isset($_SESSION["user"]) ? $_SESSION["user"] : 'admin') : ?>
            <input type='submit' value='Thêm vào giỏ hàng'>
             <?php endif; ?>
