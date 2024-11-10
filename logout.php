@@ -1,9 +1,13 @@
 <?php
-    session_start();
-    if(isset($_SESSION["user"])){
-        
-        session_destroy();
-        
-    }
-    header("location:index.php");
+session_start();
+
+// Xóa tất cả dữ liệu trong session
+session_unset();
+
+// Hủy session
+session_destroy();
+
+// Điều hướng về trang chủ hoặc trang đăng nhập
+header("Location: index.php");
+exit;
 ?>

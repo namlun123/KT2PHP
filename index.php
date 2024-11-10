@@ -28,13 +28,14 @@
                     // Hiển thị thêm mục "Quản lý người dùng" nếu user có quyền quản trị (permiss == 1)
                     if ($_SESSION["permiss"] == 1) {
                         echo "<a href='#' class='nav-link'>Quản lý người dùng</a>";
+                        echo "<a href='dssp.php' class='nav-link'>Quản lý sản phẩm</a>";
+
                     }
 
                     // Các liên kết cho người dùng đã đăng nhập
-                    echo "<a href='dssp.php' class='nav-link'>Quản lý sản phẩm</a>";
                     echo "<span class='welcome-text'>Xin chào, {$_SESSION['user']}</span>";
-                    echo "<a href='cart.php' class='nav-link cart'><i class='fas fa-shopping-cart'></i></a>";
                     echo "<a href='logout.php' class='nav-link logout'>Đăng xuất</a>";
+
                 } 
                 ?>
             </nav>
