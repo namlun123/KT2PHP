@@ -96,7 +96,18 @@ if (isset($_SESSION["user"])) {
 
                 // Tính thành tiền cho mỗi sản phẩm trong giỏ hàng
                 $thanhtien = $item['giaban'] * $item['soluong'];
+                // Kiểm tra nếu chưa có `$soluong_tonkho`, thực hiện truy vấn để lấy thông tin tồn kho cho sản phẩm
+                if (!isset($soluong_tonkho) || $soluong_tonkho === null) {
+                    $sql_tonkho = "SELECT soluong AS soluong_tonkho FROM sanpham WHERE mahang = '$mahang'";
+                    $result_tonkho = $con->query($sql_tonkho);
 
+                    if ($result_tonkho && $result_tonkho->num_rows > 0) {
+                        $row_tonkho = $result_tonkho->fetch_assoc();
+                        $soluong_tonkho = $row_tonkho['soluong_tonkho'];
+                    } else {
+                        $soluong_tonkho = 0; // Gán giá trị mặc định nếu không tìm thấy sản phẩm
+                    }
+                }
                 // Hiển thị thông tin sản phẩm trong bảng
                 echo "<tr>
                 <td>$i</td>
@@ -104,7 +115,7 @@ if (isset($_SESSION["user"])) {
                 <td>$tenhang</td>
                 <td><img src='image/{$hinhanh}' width='50'></td>
                 <td>
-                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
+                   <input type='number' id='soluong$i' value='{$item['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$item['giaban']}</td>
