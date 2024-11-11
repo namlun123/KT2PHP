@@ -24,7 +24,7 @@ if (isset($_SESSION['message'])) {
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong, sanpham.soluong
             FROM sanpham 
             INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
             INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -38,12 +38,17 @@ if (isset($_SESSION["user"])) {
         $i = 1;
         while ($row = $result->fetch_assoc()) {
             $thanhtien = $row['giaban'] * $row['soluong'];
+            $mahang = $row['mahang'];
+            $soluong_tonkho = $row['soluong'];
             echo "<tr>
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
+                <td>
+                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
+                    <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
+                </td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -98,7 +103,10 @@ if (isset($_SESSION["user"])) {
                 <td>{$item['mahang']}<input type='hidden' value='{$item['mahang']}' name='mahang$i'></td>
                 <td>$tenhang</td>
                 <td><img src='image/{$hinhanh}' width='50'></td>
-                <td><input type='number' id='soluong$i' value='{$item['soluong']}' name='soluong$i' min='1' onchange='tinhtien($i);'></td>
+                <td>
+                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
+                    <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
+                </td>
                 <td id='gia$i'>{$item['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$item['mahang']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -139,6 +147,33 @@ $con->close();
         
     </style>
     <script>
+        function checkQuantity(index, maxQuantity) {
+    const quantityInput = document.getElementById(`soluong${index}`);
+    const warningMessage = document.getElementById(`warning${index}`);
+    
+    if (quantityInput.value > maxQuantity) {
+        warningMessage.style.display = 'block';
+        quantityInput.value = maxQuantity;
+    } else {
+        warningMessage.style.display = 'none';
+    }
+}
+
+function validateQuantities() {
+    let isValid = true;
+    const itemCount = document.querySelectorAll('input[name^="soluong"]').length;
+
+    for (let i = 1; i <= itemCount; i++) {
+        const quantityInput = document.getElementById(`soluong${i}`);
+        const maxQuantity = parseInt(quantityInput.getAttribute("max"), 10);
+
+        if (quantityInput.value > maxQuantity) {
+            document.getElementById(`warning${i}`).style.display = 'block';
+            isValid = false;
+        }
+    }
+    return isValid;
+}
         // Hàm xác nhận xóa
         function ktraxoa() {
             return confirm("Bạn có muốn xóa không?");

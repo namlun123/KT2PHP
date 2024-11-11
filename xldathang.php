@@ -50,22 +50,30 @@ for ($i = 1; $i <= $slmahang; $i++) {
     $product_result = $con->query($check_product_query);
 
     // Lấy giá sản phẩm từ bảng sanpham
-    $query_gia = "SELECT giahang FROM sanpham WHERE mahang='$mahang'";
+    $query_gia = "SELECT giahang, soluong FROM sanpham WHERE mahang='$mahang'";
     $gia_result = $con->query($query_gia);
 
     if ($gia_result->num_rows > 0) {
         $gia_row = $gia_result->fetch_assoc();
         $giaban = $gia_row['giahang'];
+        $soluongton = $gia_row['soluong']; // Số lượng sản phẩm trong kho
 
-        if ($product_result->num_rows > 0) {
-            // Nếu có, cập nhật số lượng và giá bán
-            $update_chitietdathang = "UPDATE chitietdathang SET soluong=$soluong, giaban=$giaban WHERE sohoadon='$sohoadon' AND mahang='$mahang'";
-            $con->query($update_chitietdathang);
-        } else {
-            // Nếu không, thêm sản phẩm vào chi tiết đặt hàng
-            $insert_chitietdathang = "INSERT INTO chitietdathang (sohoadon, mahang, soluong, giaban) VALUES ('$sohoadon', '$mahang', $soluong, $giaban)";
-            $con->query($insert_chitietdathang);
-        }
+        if ($soluongton >= $soluong) {
+            if ($product_result->num_rows > 0) {
+                // Nếu có, cập nhật số lượng và giá bán
+                $update_chitietdathang = "UPDATE chitietdathang SET soluong=$soluong, giaban=$giaban WHERE sohoadon='$sohoadon' AND mahang='$mahang'";
+                $con->query($update_chitietdathang);
+            } else {
+                // Nếu không, thêm sản phẩm vào chi tiết đặt hàng
+                $insert_chitietdathang = "INSERT INTO chitietdathang (sohoadon, mahang, soluong, giaban) VALUES ('$sohoadon', '$mahang', $soluong, $giaban)";
+                $con->query($insert_chitietdathang);
+            }
+
+            // Cập nhật số lượng sản phẩm trong kho
+            $new_soluong = $soluongton - $soluong; // Trừ số lượng đã đặt
+            $update_soluong_sanpham = "UPDATE sanpham SET soluong = $new_soluong WHERE mahang = '$mahang'";
+            $con->query($update_soluong_sanpham);
+        } 
     } else {
         echo "Không tìm thấy sản phẩm với mã hàng $mahang.";
     }
