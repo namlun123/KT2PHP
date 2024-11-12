@@ -25,12 +25,23 @@ if (isset($_SESSION["user"])) {
     header("Location: giohang.php");
     exit();
 } else {
-    // Người dùng chưa đăng nhập, kiểm tra giỏ hàng trong session
-    if (isset($_SESSION['cart'])) {
-        unset($_SESSION['cart']); // Xóa giỏ hàng trong session nếu có
-        $_SESSION['message'] = 'Đã xóa giỏ hàng trong session.';
+   // Người dùng chưa đăng nhập, kiểm tra giỏ hàng trong cơ sở dữ liệu dựa trên session_id
+
+    // Lấy session_id để xác định giỏ hàng tạm thời
+    $sessionID = session_id();
+
+    // Xóa chi tiết đơn hàng tạm thời của người dùng chưa đăng nhập trong cơ sở dữ liệu
+    $sql_delete_details_temp = "DELETE chitietdathang FROM chitietdathang
+    INNER JOIN dondathang ON chitietdathang.sohoadon = dondathang.sohoadon
+    WHERE dondathang.nguoidathang = '$sessionID' AND dondathang.chedo = 0";
+
+    // Thực thi câu lệnh xóa chi tiết đơn hàng tạm thời
+    if ($con->query($sql_delete_details_temp)) {
+        // Thông báo xóa thành công
+        $_SESSION['message'] = 'Đã xóa toàn bộ giỏ hàng tạm thời.';
     } else {
-        $_SESSION['message'] = 'Giỏ hàng của bạn hiện đang trống.';
+        // Thông báo lỗi
+        $_SESSION['message'] = 'Lỗi khi xóa giỏ hàng tạm thời.';
     }
 
     // Chuyển hướng về trang giỏ hàng

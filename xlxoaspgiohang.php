@@ -33,23 +33,34 @@ if (isset($_GET['mahang'])) {
             exit();
         }
     } else {
-        // Nếu người dùng chưa đăng nhập, xóa sản phẩm khỏi giỏ hàng trong session
-        if (isset($_SESSION['cart'])) {
-            foreach ($_SESSION['cart'] as $key => $item) {
-                if ($item['mahang'] == $mahang) {
-                    unset($_SESSION['cart'][$key]);
-                    $_SESSION['message'] = 'Đã xóa sản phẩm khỏi giỏ hàng.';
-                    header("Location: giohang.php");
-                    exit();
-                }
+        // Nếu người dùng chưa đăng nhập, xóa sản phẩm khỏi giỏ hàng tạm thời (dựa trên session_id)
+
+        // Lấy session_id để xác định giỏ hàng tạm thời
+        $sessionID = session_id();
+
+        // Kiểm tra xem giỏ hàng tạm thời có tồn tại trong cơ sở dữ liệu không
+        $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang 
+                FROM chitietdathang 
+                INNER JOIN dondathang ON chitietdathang.sohoadon = dondathang.sohoadon
+                WHERE dondathang.chedo = 0 AND dondathang.nguoidathang = '$sessionID' AND chitietdathang.mahang = '$mahang'";
+
+        $result = $con->query($sql);
+
+        if ($result->num_rows > 0) {
+            // Xóa sản phẩm khỏi cơ sở dữ liệu
+            $sqlDelete = "DELETE FROM chitietdathang WHERE sohoadon IN (SELECT sohoadon FROM dondathang WHERE nguoidathang = '$sessionID' AND chedo = 0) AND mahang = '$mahang'";
+
+            if ($con->query($sqlDelete) === TRUE) {
+                $_SESSION['message'] = 'Đã xóa sản phẩm khỏi giỏ hàng.';
+                header("Location: giohang.php");
+                exit();
+            } else {
+                $_SESSION['message'] = 'Lỗi khi xóa sản phẩm: ' . $con->error;
+                header("Location: giohang.php");
+                exit();
             }
-            // Đặt lại các chỉ số của giỏ hàng
-            $_SESSION['cart'] = array_values($_SESSION['cart']);
-            $_SESSION['message'] = 'Giỏ hàng không tồn tại.';
-            header("Location: giohang.php");
-            exit();
         } else {
-            $_SESSION['message'] = 'Giỏ hàng không tồn tại.';
+            $_SESSION['message'] = 'Sản phẩm không tồn tại trong giỏ hàng tạm thời.';
             header("Location: giohang.php");
             exit();
         }

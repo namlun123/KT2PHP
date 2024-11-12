@@ -65,6 +65,8 @@ if (isset($_SESSION["user"])) {
        
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
+
     }
 } else {
     
@@ -110,6 +112,8 @@ if (isset($_SESSION["user"])) {
         echo "<input type='hidden' value='$i' name='slmahang'>";
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
+
     }
 }
 
