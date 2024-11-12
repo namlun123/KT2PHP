@@ -15,6 +15,8 @@ if (isset($_SESSION["user"])) {
     // Kiểm tra xem người dùng đã có đơn đặt hàng chưa hoàn thành (chedo = 0) trong bảng dondathang
     $sql_check = "SELECT * FROM dondathang WHERE chedo = 0 AND nguoidathang = '$user'";
     $result = $con->query($sql_check);
+    echo "Số lượng trước khi chèn: " . $soluong;
+
 
     if ($result->num_rows == 0) { 
         // Nếu chưa có đơn hàng nào chưa hoàn thành, tạo đơn hàng mới
@@ -71,21 +73,7 @@ if (isset($_SESSION["user"])) {
     }
 }
 
-// Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đặt hàng (chitietdathang) của đơn hàng này chưa
-$sql_check_item = "SELECT * FROM chitietdathang WHERE sohoadon = $sohoadon AND mahang = '$masp'";
-$result_item = $con->query($sql_check_item);
 
-if ($result_item->num_rows == 0) {
-    // Nếu sản phẩm chưa có trong chi tiết đặt hàng, thêm mới sản phẩm vào chi tiết đặt hàng
-    $insert_chitietdathang = "INSERT INTO chitietdathang(sohoadon, mahang, giaban, soluong) VALUES($sohoadon, '$masp', $gia, $soluong)";
-    $con->query($insert_chitietdathang);
-} else {
-    // Nếu sản phẩm đã có trong chi tiết đặt hàng, cập nhật số lượng sản phẩm trong giỏ hàng
-    $row_item = $result_item->fetch_assoc();
-    $new_quantity = $row_item['soluong'] + $soluong; // Tăng số lượng hiện tại với số lượng mới
-    $update_chitietdathang = "UPDATE chitietdathang SET soluong = $new_quantity WHERE sohoadon = $sohoadon AND mahang = '$masp'";
-    $con->query($update_chitietdathang);
-}
 
 // Chuyển hướng về trang chi tiết sản phẩm với tham số báo thành công để hiển thị popup thông báo
 header("location:chitiet_mathang.php?Masp=$masp&added=true&quantity=$soluong");

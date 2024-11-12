@@ -24,7 +24,7 @@ if (isset($_SESSION['message'])) {
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong, sanpham.soluong
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
             FROM sanpham 
             INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
             INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -46,7 +46,7 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td>
-                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
+                    <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$row['giaban']}</td>
@@ -70,7 +70,7 @@ if (isset($_SESSION["user"])) {
     
     // Nếu người dùng chưa đăng nhập, lấy giỏ hàng từ session
     // Sử dụng session_id để lấy giỏ hàng tạm thời từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
             FROM sanpham 
             INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
             INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -91,7 +91,10 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'></td>
+                <td>
+                    <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
+                    <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
+                </td>               
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>

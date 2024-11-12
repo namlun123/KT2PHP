@@ -73,7 +73,7 @@ $soluong_tonkho = $row['soluong'];
 <body>
     <div class="container">
         <h3>Thông Tin Sản Phẩm</h3>
-        <form method='POST' action='xlThemgiohang.php' onsubmit='event.preventDefault(); submitForm();'>
+        <form method='POST' action='xlthemgiohang.php' onsubmit='event.preventDefault(); submitForm();'>
             <div class='product-info'>
                 <label>Mã Sản Phẩm:</label> <span><?php echo $row['mahang']; ?></span>
                 <input type='hidden' name='Masp' value='<?php echo $row['mahang']; ?>'>
