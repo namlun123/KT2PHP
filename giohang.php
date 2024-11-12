@@ -67,79 +67,50 @@ if (isset($_SESSION["user"])) {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
     }
 } else {
+    
     // Nếu người dùng chưa đăng nhập, lấy giỏ hàng từ session
-    if (isset($_SESSION['cart'])) {
-        $cart = $_SESSION['cart'];
-        if (count($cart) > 0) {
-            echo "<form action='xldathang.php' method='post'>";
-            echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
+    // Sử dụng session_id để lấy giỏ hàng tạm thời từ cơ sở dữ liệu
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
+            FROM sanpham 
+            INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
+            INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
+            WHERE chedo = 0 AND nguoidathang = '$sessionID' "; // Dùng session_id() để xác định giỏ hàng tạm
+    $result = $con->query($sql);
 
-            $i = 1;
-            foreach ($cart as $item) {
-                // Lấy mã hàng từ giỏ hàng
-                $mahang = $item['mahang'];
+    if ($result->num_rows > 0) {
+        echo "<form action='xldathang.php' method='post'>";
+        echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
-                // Truy vấn cơ sở dữ liệu để lấy thông tin tên sản phẩm và hình ảnh
-                $sql_product = "SELECT tenhang, hinhanh FROM sanpham WHERE mahang = '$mahang'";
-                $result_product = $con->query($sql_product);
-
-                if ($result_product && $result_product->num_rows > 0) {
-                    // Lấy thông tin sản phẩm từ cơ sở dữ liệu
-                    $product = $result_product->fetch_assoc();
-                    $tenhang = $product['tenhang'];
-                    $hinhanh = $product['hinhanh'];
-                } else {
-                    // Nếu không tìm thấy, gán giá trị mặc định
-                    $tenhang = 'Tên sản phẩm không có';
-                    $hinhanh = 'path/to/default/image.jpg';
-                }
-
-                // Tính thành tiền cho mỗi sản phẩm trong giỏ hàng
-                $thanhtien = $item['giaban'] * $item['soluong'];
-                // Kiểm tra nếu chưa có `$soluong_tonkho`, thực hiện truy vấn để lấy thông tin tồn kho cho sản phẩm
-                if (!isset($soluong_tonkho) || $soluong_tonkho === null) {
-                    $sql_tonkho = "SELECT soluong AS soluong_tonkho FROM sanpham WHERE mahang = '$mahang'";
-                    $result_tonkho = $con->query($sql_tonkho);
-
-                    if ($result_tonkho && $result_tonkho->num_rows > 0) {
-                        $row_tonkho = $result_tonkho->fetch_assoc();
-                        $soluong_tonkho = $row_tonkho['soluong_tonkho'];
-                    } else {
-                        $soluong_tonkho = 0; // Gán giá trị mặc định nếu không tìm thấy sản phẩm
-                    }
-                }
-                // Hiển thị thông tin sản phẩm trong bảng
-                echo "<tr>
+        $i = 1;
+        while ($row = $result->fetch_assoc()) {
+            $thanhtien = $row['giaban'] * $row['soluong'];
+            $mahang = $row['mahang'];
+            $soluong_tonkho = $row['soluong'];
+            echo "<tr>
                 <td>$i</td>
-                <td>{$item['mahang']}<input type='hidden' value='{$item['mahang']}' name='mahang$i'></td>
-                <td>$tenhang</td>
-                <td><img src='image/{$hinhanh}' width='50'></td>
-                <td>
-                   <input type='number' id='soluong$i' value='{$item['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
-                    <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>
-                <td id='gia$i'>{$item['giaban']}</td>
+                <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                <td>{$row['tenhang']}</td>
+                <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
+                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'></td>
+                <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
-                <td><a href='xlxoaspgiohang.php?mahang={$item['mahang']}' onclick='return ktraxoa();'>Xóa</a></td>
-                 </tr>";
-            
-                $i++;
-            }
-            echo "</table>";
-
-            echo "<div style='text-align: center; margin-top: 20px;'>";
-            echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
-            echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
-            echo "</div>";
-            echo "<input type='hidden' value='$i' name='slmahang'>";
-
-        } else {
-            echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
+                <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
+            </tr>";
+            $i++;
         }
+        echo "</table>";
+
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
+        echo "</div>";
+        echo "<input type='hidden' value='$i' name='slmahang'>";
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
     }
 }
+
+
 
 $con->close();
 
