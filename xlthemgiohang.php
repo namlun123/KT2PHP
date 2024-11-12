@@ -71,6 +71,22 @@ if (isset($_SESSION["user"])) {
         $row = $result->fetch_assoc();
         $sohoadon = $row["sohoadon"];
     }
+    // Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đặt hàng (chitietdathang) của đơn hàng này chưa
+    $sql_check_item = "SELECT * FROM chitietdathang WHERE sohoadon = $sohoadon AND mahang = '$masp'";
+    $result_item = $con->query($sql_check_item);
+
+    if ($result_item->num_rows == 0) {
+        // Nếu sản phẩm chưa có trong chi tiết đặt hàng, thêm mới sản phẩm vào chi tiết đặt hàng
+        $insert_chitietdathang = "INSERT INTO chitietdathang(sohoadon, mahang, giaban, soluong) VALUES($sohoadon, '$masp', $gia, $soluong)";
+        $con->query($insert_chitietdathang);
+    } else {
+        // Nếu sản phẩm đã có trong chi tiết đặt hàng, cập nhật số lượng sản phẩm trong giỏ hàng
+        $row_item = $result_item->fetch_assoc();
+        $new_quantity = $row_item['soluong'] + $soluong; // Tăng số lượng hiện tại với số lượng mới
+        $update_chitietdathang = "UPDATE chitietdathang SET soluong = $new_quantity WHERE sohoadon = $sohoadon AND mahang = '$masp'";
+        $con->query($update_chitietdathang);
+    }
+
 }
 
 

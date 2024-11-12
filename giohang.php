@@ -37,7 +37,7 @@ if (isset($_SESSION["user"])) {
 
         $i = 1;
         while ($row = $result->fetch_assoc()) {
-            $thanhtien = $row['giaban'] * $row['soluong'];
+            $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
             echo "<tr>
@@ -85,7 +85,7 @@ if (isset($_SESSION["user"])) {
 
         $i = 1;
         while ($row = $result->fetch_assoc()) {
-            $thanhtien = $row['giaban'] * $row['soluong'];
+            $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
             echo "<tr>

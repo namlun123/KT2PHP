@@ -90,7 +90,7 @@ $soluong_tonkho = $row['soluong'];
            <input type='submit' value='Thêm vào giỏ hàng'>
             <?php endif; ?>
         </form>
-        <a href='dssp.php' class='back-button'>Quay lại</a>
+        <a href='index.php' class='back-button'>Quay lại</a>
         <div class="popup-overlay" id="popup-overlay">
             <div class="popup-content">
                 <p id="popup-message"></p>
