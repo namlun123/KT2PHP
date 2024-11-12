@@ -24,7 +24,7 @@ $sql = "SELECT dondathang.sohoadon, dondathang.thanhpho, chitietdathang.mahang, 
         WHERE dondathang.chedo = 1 AND dondathang.nguoidathang = '$user'
         ORDER BY chitietdathang.sohoadon";
         
-echo $sql;
+//echo $sql;
 
 $result = $con->query($sql);
 
@@ -90,11 +90,7 @@ if ($result->num_rows > 0) {
             <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
         </tr>";
     }
-    if(isset($row['giaban']) && !empty($row['giaban'])) {
-        echo $row['giaban'];
-    } else {
-        echo "Không thể hiển thị giá bán";
-    }
+  
     
     $VAT = $tongTienHang * 0.1;
     $phiShip = calculateShipping($province);

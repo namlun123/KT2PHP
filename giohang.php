@@ -46,7 +46,7 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td>
-                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'>
+                    <input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$row['giaban']}</td>
@@ -91,7 +91,7 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho);'></td>
+                <td><input type='number' id='soluong$i' value='{$row['soluong']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'></td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
