@@ -53,3 +53,23 @@ a {
 a:hover {
     text-decoration: underline;
 }
+button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c9302c;
+}
+
+button.view-all-orders-btn, button.view-recent-order-btn, button.continue-shopping-btn {
+    display: inline-block;
+    text-align: center;
+}

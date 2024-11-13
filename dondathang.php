@@ -11,31 +11,34 @@
 <?php
 include("connect.inp");
 session_start();
-if (isset($_SESSION["user"])) {
-    $user = $_SESSION["user"];
-} else {
-    // Người dùng chưa đăng nhập, sử dụng session ID
-    $user = session_id();
-}
+$user = $_SESSION["user"] ?? 'admin';
+
+// Kiểm tra nếu người dùng đã nhấn nút "Xem tất cả đơn hàng"
+$showAllOrders = isset($_GET['showAll']) ? true : false;
+
+// Câu truy vấn SQL
 $sql = "SELECT dondathang.sohoadon, dondathang.thanhpho, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong 
         FROM sanpham 
         INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
         INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
-        WHERE dondathang.chedo = 1 AND dondathang.nguoidathang = '$user'
-        ORDER BY chitietdathang.sohoadon";
-        
-//echo $sql;
+        WHERE dondathang.chedo = 1 AND dondathang.nguoidathang = '$user'";
+
+// Nếu không yêu cầu xem tất cả đơn hàng, chỉ lấy đơn hàng mới nhất
+if (!$showAllOrders) {
+    $sql .= " AND dondathang.sohoadon = (SELECT MAX(sohoadon) FROM dondathang WHERE nguoidathang = '$user' AND chedo = 1)";
+}
+$sql .= " ORDER BY chitietdathang.sohoadon";
 
 $result = $con->query($sql);
 
 if ($result->num_rows > 0) {
     echo "<table>";
-    echo "<tr><th>Sohoadon</th><th>Mã hàng</th><th>Tên hàng</th><th>Hình ảnh</th><th>Số lượng</th><th>Giá bán</th><th>Thành tiền</th><th>VAT</th><th>Phí vận chuyển</th><th>Tổng thanh toán</th></tr>";
+    echo "<tr><th>Sohoadon</th><th>Mã hàng</th><th>Tên hàng</th><th>Hình ảnh</th><th>Số lượng</th><th>Giá bán</th><th>Thành tiền</th><th>VAT</th><th>Phí vận chuyển</th><th>Tổng thanh toán</th><th>Xóa</th></tr>";
 
     $currentSohoadon = null;
     $tongTienHang = 0;
     $province = '';
-    
+
     function calculateShipping($province) {
         switch ($province) {
             case "Hà Nội":
@@ -80,17 +83,17 @@ if ($result->num_rows > 0) {
             <td>{$row['sohoadon']}</td>
             <td>{$row['mahang']}</td>
             <td>{$row['tenhang']}</td>
-            <td><img src='image/{$row['hinhanh']}' width='50'></td>
-            <td id='soluong'>{$row['soluong']}</td>
-            <td name = 'giaban'>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
+            <td><img src='{$row['hinhanh']}' width='50'></td>
+            <td>{$row['soluong']}</td>
+            <td>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
             <td>" . number_format($thanhTien, 0, ',', '.') . " VNĐ</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
+            <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
         </tr>";
     }
-  
-    
+
     $VAT = $tongTienHang * 0.1;
     $phiShip = calculateShipping($province);
     $tongThanhToan = $tongTienHang + $VAT + $phiShip;
@@ -108,9 +111,17 @@ if ($result->num_rows > 0) {
 } else {
     echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
 }
-        echo "<div style='text-align: center; margin-top: 20px;'>";
-        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
-        echo "</div>";
+
+// Hiển thị nút "Xem tất cả đơn hàng" nếu chỉ hiển thị đơn hàng mới nhất
+echo "<div style='text-align: center; margin-top: 20px;'>";
+if (!$showAllOrders) {
+    echo "<button onclick=\"window.location.href='dondathang.php?showAll=true'\" class='view-all-orders-btn'>Xem tất cả đơn hàng</button>";
+} else {
+    echo "<button onclick=\"window.location.href='dondathang.php'\" class='view-recent-order-btn'>Xem đơn hàng mới nhất</button>";
+}
+echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
+echo "</div>";
+
 $con->close();
 ?>
 </body>
