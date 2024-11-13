@@ -73,7 +73,7 @@ if (isset($_SESSION['message'])) {
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang , tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
         FROM sanpham 
         INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
         INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -81,15 +81,15 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<form action='xldathang.php' method='post'>"; 
+        // Form để cập nhật số lượng trong giỏ hàng qua capnhatsl.php
+        echo "<form action='capnhatsl.php' method='post'>"; 
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
         $i = 1;
         while ($row = $result->fetch_assoc()) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
-            // Định dạng thành tiền với dấu phẩy
-            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); 
             echo "<tr>
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
@@ -98,7 +98,7 @@ if (isset($_SESSION["user"])) {
                 <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>   
+                </td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -106,12 +106,14 @@ if (isset($_SESSION["user"])) {
             $i++;
         }
         echo "</table>";
+    
         // Thêm nút xác nhận
         echo "<div style='text-align: center; margin-top: 20px;'>
-            <button type='button' onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>
-            <button type='button' onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>
+            <button type='submit' class='update-cart-btn'>Cập nhật giỏ hàng</button>
         </div>";
         echo "<input type='hidden' value='$i' name='slmahang'>";
+
+
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         echo "<div style='display: flex; justify-content: center; align-items: center;'>
@@ -119,6 +121,7 @@ if (isset($_SESSION["user"])) {
       </div>";
     }
 } else {
+    
     // Nếu người dùng chưa đăng nhập, lấy giỏ hàng từ session
     // Sử dụng session_id để lấy giỏ hàng tạm thời từ cơ sở dữ liệu
     $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
@@ -129,6 +132,7 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
+        
         echo "<form action='xldathang.php' method='post'>";
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
         $i = 1;
@@ -136,17 +140,17 @@ if (isset($_SESSION["user"])) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
-             // Định dạng thành tiền với dấu phẩy
-            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); 
+
             echo "<tr>
                 <td>$i</td>
-                <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>           
+                </td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -154,11 +158,11 @@ if (isset($_SESSION["user"])) {
             $i++;
         }
         echo "</table>";
+    
         echo "<div style='text-align: center; margin-top: 20px;'>";
         echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
         echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
-        echo "</div>";
-        echo "<input type='hidden' value='$i' name='slmahang'>";
+
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         echo "<div style='display: flex; justify-content: center; align-items: center;'>
@@ -178,16 +182,17 @@ $con->close();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     function checkQuantity(index, maxQuantity) {
-        const quantityInput = document.getElementById(`soluong${index}`);
-        const warningMessage = document.getElementById(`warning${index}`);
-        
-        if (quantityInput.value > maxQuantity) {
-            warningMessage.style.display = 'block';
-            quantityInput.value = maxQuantity;
-        } else {
-            warningMessage.style.display = 'none';
-        }
+    const quantityInput = document.getElementById(`soluong${index}`);
+    const warningMessage = document.getElementById(`warning${index}`);
+    
+    if (quantityInput.value > maxQuantity) {
+        warningMessage.style.display = 'block';
+        quantityInput.value = maxQuantity;
+    } else {
+        warningMessage.style.display = 'none';
     }
+}
+
         // Hàm xác nhận xóa
         function ktraxoa() {
             return confirm("Bạn có muốn xóa không?");
@@ -233,6 +238,7 @@ $con->close();
         function formatCurrency(amount) {
             return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " VNĐ";
         }
+
 
     // Tính phí vận chuyển và cập nhật thành tiền
     function calculateShipping() {
@@ -302,9 +308,11 @@ $con->close();
             default:
                 shippingCost = 0;
         }
+
         document.getElementById("shippingCost").innerText = formatCurrency(shippingCost);
         tinhTongTien();
     }
+
     // Khi trang tải lại, tính tổng tiền và các chi phí khác
     window.onload = function() {
         tinhTongTien();
@@ -314,7 +322,7 @@ $con->close();
 <body>
     <div id="dathang">
         <h3>Thông tin giao hàng</h3>
-        Người nhận hàng:<input type="text" name="nguoinhan" required><br>
+        Người nhận hàng:<input type="text" id="nguoinhan" name="nguoinhan" required><br>
         <label for="province">Tỉnh/Thành phố:</label>
         <select id="province" name="province" onchange="calculateShipping()" required>
             <option value="">Chọn tỉnh/thành phố</option>
@@ -369,21 +377,23 @@ $con->close();
             <option value="Vĩnh Phúc">Vĩnh Phúc</option>
             <option value="Yên Bái">Yên Bái</option>
         </select><br>
-        Địa chỉ:<input type="text" name="diachi" required><br>
-        Số điện thoại:<input type="text" name="sdt" required><br>
+        Địa chỉ:<input type="text" id="diachi" name="diachi" required><br>
+        Số điện thoại:<input type="text" id="sdt" name="sdt" required><br>
+        <form id="orderForm" action="xldathang.php" method="POST">
+            <input type="hidden" name="vat" value="0">
+            <input type="hidden" name="tongtien" value="0">
+            <input type="hidden" name="shipping" value="0">
 
-        <!-- <label for="shippingCost">Phí vận chuyển:</label>
-        <span id="shippingCost">0 VNĐ</span><br> -->
-        <input type='hidden' name='vat' value="0">
-        <input type='hidden' name='tongtien' value="0">
-        <input type='hidden' name='shipping' value="0">
-        <form action="xldathang.php" method="post">
-        <input type="submit" value="Đặt hàng">
+            <!-- Các trường hidden cho mã hàng và số lượng sẽ được thêm động vào đây -->
+
+            <button type="button" class="place-order-btn" style="margin-top: 20px;" onclick="submitHiddenOrderForm();">
+                Đặt hàng
+            </button>
         </form>
     </div>
     <?php
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-     echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+     echo "<script>tinhTongTien();</script>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
