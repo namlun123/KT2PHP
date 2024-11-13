@@ -33,7 +33,7 @@ $result = $con->query($sql);
 
 if ($result->num_rows > 0) {
     echo "<table>";
-    echo "<tr><th>Sohoadon</th><th>Mã hàng</th><th>Tên hàng</th><th>Hình ảnh</th><th>Số lượng</th><th>Giá bán</th><th>Thành tiền</th><th>VAT</th><th>Phí vận chuyển</th><th>Tổng thanh toán</th><th>Xóa</th></tr>";
+    echo "<tr><th>Sohoadon</th><th>Mã hàng</th><th>Tên hàng</th><th>Hình ảnh</th><th>Số lượng</th><th>Giá bán</th><th>Thành tiền</th><th>VAT</th><th>Phí vận chuyển</th><th>Tổng thanh toán</th></tr>";
 
     $currentSohoadon = null;
     $tongTienHang = 0;
@@ -83,14 +83,13 @@ if ($result->num_rows > 0) {
             <td>{$row['sohoadon']}</td>
             <td>{$row['mahang']}</td>
             <td>{$row['tenhang']}</td>
-            <td><img src='{$row['hinhanh']}' width='50'></td>
+            <td><img src='image/{$row['hinhanh']}' width='50'></td>
             <td>{$row['soluong']}</td>
             <td>" . number_format($row['giaban'], 0, ',', '.') . " VNĐ</td>
             <td>" . number_format($thanhTien, 0, ',', '.') . " VNĐ</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
-            <td><a href='xoaLoai.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}'>Xóa</a></td>
         </tr>";
     }
 

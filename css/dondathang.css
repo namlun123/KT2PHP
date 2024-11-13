@@ -69,7 +69,24 @@ button:hover {
     background-color: #c9302c;
 }
 
-button.view-all-orders-btn, button.view-recent-order-btn, button.continue-shopping-btn {
-    display: inline-block;
-    text-align: center;
+button.view-all-orders-btn,
+button.view-recent-order-btn,
+button.continue-shopping-btn {
+    padding: 8px 20px; /* Điều chỉnh padding để nút nhỏ lại */
+    background-color: #24235f; /* Màu nền giống */
+    color: #fff; /* Màu chữ trắng */
+    border: none; /* Không có viền */
+    border-radius: 4px; /* Bo góc */
+    font-size: 1em; /* Cỡ chữ */
+    cursor: pointer; /* Con trỏ chuột dạng pointer */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu nền */
+    display: inline-block; /* Để các nút hiển thị inline */
+    text-align: center; /* Canh giữa nội dung trong nút */
+}
+
+/* Khi di chuột vào, màu nền thay đổi */
+button.view-all-orders-btn:hover,
+button.view-recent-order-btn:hover,
+button.continue-shopping-btn:hover {
+    background-color: #65698d; /* Màu nền khi hover giống với input[type="submit"]:hover */
 }

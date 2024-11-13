@@ -200,21 +200,6 @@ $con->close();
     }
 }
 
-    function validateQuantities() {
-        let isValid = true;
-        const itemCount = document.querySelectorAll('input[name^="soluong"]').length;
-
-        for (let i = 1; i <= itemCount; i++) {
-            const quantityInput = document.getElementById(`soluong${i}`);
-            const maxQuantity = parseInt(quantityInput.getAttribute("max"), 10);
-
-            if (quantityInput.value > maxQuantity) {
-                document.getElementById(`warning${i}`).style.display = 'block';
-                isValid = false;
-            }
-        }
-        return isValid;
-    }
         // Hàm xác nhận xóa
         function ktraxoa() {
             return confirm("Bạn có muốn xóa không?");
