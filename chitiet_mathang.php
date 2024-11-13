@@ -75,10 +75,13 @@ $soluong_tonkho = $row['soluong'];
         <h3>Thông Tin Sản Phẩm</h3>
         <form method='POST' action='xlthemgiohang.php' onsubmit='event.preventDefault(); submitForm();'>
             <div class='product-info'>
+                <label>Hình Ảnh Sản Phẩm:</label>
+                <img src="image/<?php echo $row['hinhanh']; ?>" alt="Hình ảnh sản phẩm" style="width: 100%; height: auto;">                
                 <label>Mã Sản Phẩm:</label> <span><?php echo $row['mahang']; ?></span>
                 <input type='hidden' name='Masp' value='<?php echo $row['mahang']; ?>'>
                 <label>Tên Sản Phẩm:</label> <span><?php echo $row['tenhang']; ?></span>
                 <label>Giá:</label> <span><?php echo $row['giahang']; ?> VNĐ</span>
+                <label>Số lượng trong kho:</label> <span><?php echo $row['soluong']; ?> </span>
                 <input type='hidden' name='Gia' value='<?php echo $row['giahang']; ?>'>
             </div>
             <div class='quantity'>
