@@ -80,7 +80,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
-.continue-shopping-btn {
+.update-cart-btn .continue-shopping-btn {
     padding: 10px 20px;
     background-color: #24235f;
     color: white;
