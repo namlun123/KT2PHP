@@ -2,8 +2,6 @@
 session_start(); // Bắt đầu session để lưu trữ thông tin người dùng đăng nhập
 include("connect.inp"); // Kết nối đến cơ sở dữ liệu
 
-
-
 // Lấy các giá trị từ form (mã sản phẩm, giá, và số lượng)
 $masp = $_POST['Masp']; // Mã sản phẩm
 $gia = $_POST['Gia'];    // Giá sản phẩm
@@ -97,8 +95,6 @@ if (isset($_SESSION["user"])) {
     }
 
 }
-
-
 
 // Chuyển hướng về trang chi tiết sản phẩm với tham số báo thành công để hiển thị popup thông báo
 header("location:chitiet_mathang.php?Masp=$masp&added=true&quantity=$soluong");

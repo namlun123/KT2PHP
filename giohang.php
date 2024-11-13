@@ -5,13 +5,10 @@ include("connect.inp");
 $session_lifetime = 300; // 5 phút
 ini_set('session.gc_maxlifetime', $session_lifetime);
 setcookie(session_name(), session_id(), time() + $session_lifetime);
+
 session_start();
-// In ra session_id và thời gian hiện tại
 // Thiết lập múi giờ cho Việt Nam (UTC+7)
 date_default_timezone_set('Asia/Ho_Chi_Minh');
-
-//echo "Session ID: " . session_id() . "<br>"; // In session ID
-//echo "Current Time: " . date("Y-m-d H:i:s") . "<br>"; // In thời gian hiện tại dưới dạng ngày giờ
 
 // Kiểm tra thời gian của session_id
 if (!isset($_SESSION['session_start_time'])) {
@@ -22,12 +19,18 @@ if (!isset($_SESSION['session_start_time'])) {
 // Tính toán thời gian đã trôi qua kể từ khi session bắt đầu
 $elapsed_time = time() - $_SESSION['session_start_time'];
 
-// In ra thời gian session đã hoạt động (theo giây)
-//echo "Thời gian session đã hoạt động: $elapsed_time giây.<br>";
-
+// Kiểm tra nếu người dùng đã đăng nhập
+if (isset($_SESSION["user"])) {
+    // Nếu người dùng đã đăng nhập, lấy tên người dùng từ session
+    $user = $_SESSION["user"];
+    echo "Xin chào, " . $user . "!";
+} else {
+    // Nếu chưa đăng nhập, hiển thị thông báo
+    echo "Bạn chưa đăng nhập.";
+}
 // Kiểm tra xem session đã hết hạn hay chưa
-if ($elapsed_time > $session_lifetime) {
-    // Nếu session đã hết hạn, hủy session
+if ($elapsed_time > $session_lifetime && !isset($_SESSION['user'])) {
+// Nếu session đã hết hạn, hủy session
     session_unset();     // Xóa tất cả dữ liệu session
     session_destroy();   // Hủy session
     echo "Session đã hết hạn và bị hủy. ";
@@ -35,7 +38,8 @@ if ($elapsed_time > $session_lifetime) {
     // Cập nhật lại thời gian session nếu session vẫn còn hoạt động
     $_SESSION['session_start_time'] = time();
 }
-
+// Lấy session ID 
+$sessionID = session_id();
 // Xóa các chi tiết đơn hàng tạm cũ đã quá thời gian (vượt quá session_lifetime)
 $sql_delete_old_order_details = "DELETE FROM chitietdathang WHERE sohoadon IN (
                                 SELECT sohoadon FROM dondathang 
@@ -60,19 +64,6 @@ if ($con->query($sql_delete_old_orders) === TRUE) {
     echo "Lỗi khi xóa đơn hàng: " . $con->error . "<br>";
 }
 
-// Lấy session ID (không cần phải gán user là "guest")
-$sessionID = session_id();
-
-// Kiểm tra nếu người dùng đã đăng nhập
-if (isset($_SESSION["user"])) {
-    // Nếu người dùng đã đăng nhập, lấy tên người dùng từ session
-    $user = $_SESSION["user"];
-    echo "Xin chào, " . $user . "!";
-} else {
-    // Nếu chưa đăng nhập, hiển thị thông báo
-    echo "Bạn chưa đăng nhập.";
-}
-
 if (isset($_SESSION['message'])) {
     echo "<script>alert('" . $_SESSION['message'] . "');</script>";
     unset($_SESSION['message']); // Xóa thông báo sau khi hiển thị
@@ -81,7 +72,7 @@ if (isset($_SESSION['message'])) {
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang , tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
         FROM sanpham 
         INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
         INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -89,6 +80,7 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
+        
         echo "<form action='xldathang.php' method='post'>"; // Đặt id cho form chính
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
@@ -104,18 +96,18 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-                 <td>
+               <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>
+                </td>   
                 <td id='gia$i'>{$row['giaban']}</td>
-                <td class='thanhtien' id='thanhtien$i'>{$formatted_thanhtienn} VNĐ</td>
+                <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
             </tr>";
             $i++;
         }
         echo "</table>";
-
+    
         // Thêm nút xác nhận
         echo "<div style='text-align: center; margin-top: 20px;'>
             <button type='button' onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>
@@ -143,6 +135,7 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
+        
         echo "<form action='xldathang.php' method='post'>";
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
@@ -161,15 +154,15 @@ if (isset($_SESSION["user"])) {
                 <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>               
+                </td>           
                 <td id='gia$i'>{$row['giaban']}</td>
-                <td class='thanhtien' id='thanhtien$i'>{$formatted_thanhtien} VNĐ</td>
+                <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
             </tr>";
             $i++;
         }
         echo "</table>";
-
+    
         echo "<div style='text-align: center; margin-top: 20px;'>";
         echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
         echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
@@ -182,11 +175,7 @@ if (isset($_SESSION["user"])) {
       </div>";
     }
 }
-
-
-
 $con->close();
-
 ?>
 
 
@@ -197,6 +186,7 @@ $con->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng</title>
     <link rel="stylesheet" href="css/giohang.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     function checkQuantity(index, maxQuantity) {
     const quantityInput = document.getElementById(`soluong${index}`);
@@ -210,134 +200,151 @@ $con->close();
     }
 }
 
-function validateQuantities() {
-    let isValid = true;
-    const itemCount = document.querySelectorAll('input[name^="soluong"]').length;
+    function validateQuantities() {
+        let isValid = true;
+        const itemCount = document.querySelectorAll('input[name^="soluong"]').length;
 
-    for (let i = 1; i <= itemCount; i++) {
-        const quantityInput = document.getElementById(`soluong${i}`);
-        const maxQuantity = parseInt(quantityInput.getAttribute("max"), 10);
+        for (let i = 1; i <= itemCount; i++) {
+            const quantityInput = document.getElementById(`soluong${i}`);
+            const maxQuantity = parseInt(quantityInput.getAttribute("max"), 10);
 
-        if (quantityInput.value > maxQuantity) {
-            document.getElementById(`warning${i}`).style.display = 'block';
-            isValid = false;
+            if (quantityInput.value > maxQuantity) {
+                document.getElementById(`warning${i}`).style.display = 'block';
+                isValid = false;
+            }
         }
+        return isValid;
     }
-    return isValid;
-}
         // Hàm xác nhận xóa
         function ktraxoa() {
             return confirm("Bạn có muốn xóa không?");
         }
 
         function showError(message) {
-            alert(message);
+                    alert(message);
         }
         
         // Tính thành tiền mỗi khi số lượng thay đổi
         function tinhtien(row) {
-            var soluong = document.getElementById("soluong" + row).value;
-            var gia = document.getElementById("gia" + row).innerText;
-            var thanhtien = soluong * parseFloat(gia);
-            document.getElementById("thanhtien" + row).innerText = thanhtien.toLocaleString() + " VNĐ";
-            tinhTongTien();
+                var soluong = document.getElementById("soluong" + row).value;
+                var gia = document.getElementById("gia" + row).innerText;
+                var thanhtien = soluong * parseFloat(gia);
+                document.getElementById("thanhtien" + row).innerText = thanhtien.toLocaleString() + " VNĐ";
+                // Cập nhật lại giá trị data-thanhtien để hàm tinhTongTien() có thể tính chính xác
+                document.getElementById("thanhtien" + row).setAttribute("data-thanhtien", thanhtien);
+                tinhTongTien();
         }
-
-        // Tính tổng tiền và cập nhật VAT, thành tiền
         function tinhTongTien() {
             var total = 0;
             var rows = document.getElementsByClassName("thanhtien");
+
+            // Lặp qua từng dòng và tính tổng tiền
             for (var i = 0; i < rows.length; i++) {
-                total += parseFloat(rows[i].innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
+                // Lấy giá trị gốc từ data-thanhtien
+                var price = parseFloat(rows[i].getAttribute("data-thanhtien"));
+                if (!isNaN(price)) {
+                    total += price;
+                }
             }
 
-            var VAT = total * 0.1;  // Tính VAT là 10% của tổng tiền
+            // Tính VAT (10%)
+            var VAT = total * 0.1;
+
+            // Lấy chi phí vận chuyển
             var shipping = parseFloat(document.getElementById("shippingCost").innerText.replace(" VNĐ", "").replace(/,/g, "")) || 0;
+
+            // Tính tổng cuối cùng
             var finalAmount = total + VAT + shipping;
 
-            // Hiển thị kết quả
-            document.getElementById("tongtien").innerText = total.toLocaleString() + " VNĐ";
-            document.getElementById("VAT").innerText = VAT.toLocaleString() + " VNĐ";
-            document.getElementById("thanhTienTong").innerText = finalAmount.toLocaleString() + " VNĐ";
+            // Đảm bảo giá trị không bị làm tròn và hiển thị đúng
+            document.getElementById("tongtien").innerText = formatCurrency(total);
+            document.getElementById("VAT").innerText = formatCurrency(VAT);
+            document.getElementById("thanhTienTong").innerText = formatCurrency(finalAmount);
         }
 
-        // Tính phí vận chuyển và cập nhật thành tiền
-        function calculateShipping() {
-            var province = document.getElementById("province").value;
-            var shippingCost = 0;
-
-            switch (province) {
-                case "Hà Nội":
-                    shippingCost = 30000;
-                    break;
-                case "Hà Giang":
-                case "Hà Nam":
-                case "Hải Dương":
-                case "Hải Phòng":
-                case "Hòa Bình":
-                case "Hưng Yên":
-                case "Lai Châu":
-                case "Lạng Sơn":
-                case "Ninh Bình":
-                case "Phú Thọ":
-                case "Quảng Ninh":
-                case "Sơn La":
-                case "Thái Bình":
-                case "Thái Nguyên":
-                case "Tuyên Quang":
-                case "Yên Bái":
-                    shippingCost = 40000;
-                    break;
-                case "Đà Nẵng":
-                case "Bình Định":
-                case "Hà Tĩnh":
-                case "Thanh Hóa":
-                case "Khánh Hòa":
-                case "Nghệ An":
-                case "Ninh Thuận":
-                case "Phú Yên":
-                case "Quảng Bình":
-                case "Quảng Nam":
-                case "Quảng Ngãi":
-                case "Quảng Trị":
-                case "Thừa Thiên Huế":
-                case "Vĩnh Phúc":
-                    shippingCost = 45000;
-                    break;
-                case "An Giang":
-                case "Bà Rịa - Vũng Tàu":
-                case "Bạc Liêu":
-                case "Bến Tre":
-                case "Bình Dương":
-                case "Bình Phước":
-                case "Cà Mau":
-                case "Cần Thơ":
-                case "Đắk Lắk":
-                case "Đắk Nông":
-                case "Gia Lai":
-                case "Kiên Giang":
-                case "Kon Tum":
-                case "Lâm Đồng":
-                case "Sóc Trăng":
-                case "Tây Ninh":
-                case "Long An":
-                case "Tiền Giang":
-                case "Trà Vinh":
-                case "Vĩnh Long":
-                    shippingCost = 50000;
-                    break;
-                default:
-                    shippingCost = 0;
-            }
-
-            document.getElementById("shippingCost").innerText = shippingCost.toLocaleString() + " VNĐ";
-            tinhTongTien();
+        // Hàm định dạng tiền tệ
+        function formatCurrency(amount) {
+            return amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " VNĐ";
         }
 
-        // Khi trang tải lại, tính tổng tiền và các chi phí khác
-        window.onload = function() {
-            tinhTongTien();
-        };
+
+    // Tính phí vận chuyển và cập nhật thành tiền
+    function calculateShipping() {
+        var province = document.getElementById("province").value;
+        var shippingCost = 0;
+
+        switch (province) {
+            case "Hà Nội":
+                shippingCost = 30000;
+                break;
+            case "Hà Giang":
+            case "Hà Nam":
+            case "Hải Dương":
+            case "Hải Phòng":
+            case "Hòa Bình":
+            case "Hưng Yên":
+            case "Lai Châu":
+            case "Lạng Sơn":
+            case "Ninh Bình":
+            case "Phú Thọ":
+            case "Quảng Ninh":
+            case "Sơn La":
+            case "Thái Bình":
+            case "Thái Nguyên":
+            case "Tuyên Quang":
+            case "Yên Bái":
+                shippingCost = 40000;
+                break;
+            case "Đà Nẵng":
+            case "Bình Định":
+            case "Hà Tĩnh":
+            case "Thanh Hóa":
+            case "Khánh Hòa":
+            case "Nghệ An":
+            case "Ninh Thuận":
+            case "Phú Yên":
+            case "Quảng Bình":
+            case "Quảng Nam":
+            case "Quảng Ngãi":
+            case "Quảng Trị":
+            case "Thừa Thiên Huế":
+            case "Vĩnh Phúc":
+                shippingCost = 45000;
+                break;
+            case "An Giang":
+            case "Bà Rịa - Vũng Tàu":
+            case "Bạc Liêu":
+            case "Bến Tre":
+            case "Bình Dương":
+            case "Bình Phước":
+            case "Cà Mau":
+            case "Cần Thơ":
+            case "Đắk Lắk":
+            case "Đắk Nông":
+            case "Gia Lai":
+            case "Kiên Giang":
+            case "Kon Tum":
+            case "Lâm Đồng":
+            case "Sóc Trăng":
+            case "Tây Ninh":
+            case "Long An":
+            case "Tiền Giang":
+            case "Trà Vinh":
+            case "Vĩnh Long":
+                shippingCost = 50000;
+                break;
+            default:
+                shippingCost = 0;
+        }
+
+        document.getElementById("shippingCost").innerText = formatCurrency(shippingCost);
+        tinhTongTien();
+    }
+
+    // Khi trang tải lại, tính tổng tiền và các chi phí khác
+    window.onload = function() {
+        tinhTongTien();
+    };
     </script>
 </head>
 <body>
