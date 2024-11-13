@@ -31,7 +31,6 @@
                         echo "<a href='dssp.php' class='nav-link'>Quản lý sản phẩm</a>";
 
                     }
-
                     // Các liên kết cho người dùng đã đăng nhập
                     echo "<a href='dondathang.php' class='nav-link'>Danh sách đơn hàng</a>";
                     echo "<span class='welcome-text'>Xin chào, {$_SESSION['user']}</span>";
