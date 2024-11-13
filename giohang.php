@@ -89,7 +89,7 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<form action='xldathang.php' method='post' id='cartForm'>"; // Đặt id cho form chính
+        echo "<form action='xldathang.php' method='post'>"; // Đặt id cho form chính
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
         $i = 1;
@@ -102,8 +102,8 @@ if (isset($_SESSION["user"])) {
                 <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-                <td>
-                    <input type='number' id='soluong$i' name='soluong$i' value='{$row['soluong_dagui']}' min='1' max='$soluong_tonkho' onchange=\"if (checkQuantity($i, $soluong_tonkho)) updateQuantity($i, '{$row['mahang']}', '{$row['sohoadon']}');\">
+                 <td>
+                    <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$row['giaban']}</td>
@@ -120,13 +120,7 @@ if (isset($_SESSION["user"])) {
             <button type='button' onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>
         </div>";
         echo "<input type='hidden' value='$i' name='slmahang'>";
-        echo "</form>";
-        echo "<form id='updateCartForm' action='capnhatsl.php' method='post'>
-            <input type='hidden' name='mahang' id='mahang_hidden'>
-            <input type='hidden' name='sohoadon' id='sohoadon_hidden'>
-            <input type='hidden' name='soluong' id='soluong_hidden'>
-            <input type='hidden' name='update_cart' value='1'>
-        </form>";
+
 
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
@@ -200,29 +194,15 @@ $con->close();
     <title>Giỏ Hàng</title>
     <link rel="stylesheet" href="css/giohang.css">
     <script>
-   function updateQuantity(index, mahang, sohoadon) {
-    // Kiểm tra số lượng trước khi cập nhật
-    const quantityValid = checkQuantity(index, document.getElementById(`soluong${index}`);
-
-    if (quantityValid) {
-        // Cập nhật giá trị số lượng và thông tin sản phẩm vào các input ẩn
-        const cartForm = document.getElementById('cartForm'); // Lấy form chính
-        cartForm.submit(); // Gửi form đi tới action của form chính (xldathang.php)
-    }
-}
-
-function checkQuantity(index, maxQuantity) {
+    function checkQuantity(index, maxQuantity) {
     const quantityInput = document.getElementById(`soluong${index}`);
-    const warningElement = document.getElementById(`warning${index}`);
-
-    // Kiểm tra nếu số lượng vượt quá tồn kho
+    const warningMessage = document.getElementById(`warning${index}`);
+    
     if (quantityInput.value > maxQuantity) {
-        warningElement.style.display = 'inline';
-        quantityInput.value = maxQuantity; // Reset về tồn kho tối đa nếu vượt quá
-        return false; // Trả về false để ngăn cập nhật nếu không hợp lệ
+        warningMessage.style.display = 'block';
+        quantityInput.value = maxQuantity;
     } else {
-        warningElement.style.display = 'none';
-        return true; // Số lượng hợp lệ
+        warningMessage.style.display = 'none';
     }
 }
 
