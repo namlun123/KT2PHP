@@ -1,7 +1,64 @@
 <?php
 
 include("connect.inp");
+// Đặt TTL cho session
+$session_lifetime = 300; // 5 phút
+ini_set('session.gc_maxlifetime', $session_lifetime);
+setcookie(session_name(), session_id(), time() + $session_lifetime);
 session_start();
+// In ra session_id và thời gian hiện tại
+// Thiết lập múi giờ cho Việt Nam (UTC+7)
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
+//echo "Session ID: " . session_id() . "<br>"; // In session ID
+//echo "Current Time: " . date("Y-m-d H:i:s") . "<br>"; // In thời gian hiện tại dưới dạng ngày giờ
+
+// Kiểm tra thời gian của session_id
+if (!isset($_SESSION['session_start_time'])) {
+    // Nếu session mới được tạo, lưu thời gian bắt đầu
+    $_SESSION['session_start_time'] = time();
+}
+
+// Tính toán thời gian đã trôi qua kể từ khi session bắt đầu
+$elapsed_time = time() - $_SESSION['session_start_time'];
+
+// In ra thời gian session đã hoạt động (theo giây)
+//echo "Thời gian session đã hoạt động: $elapsed_time giây.<br>";
+
+// Kiểm tra xem session đã hết hạn hay chưa
+if ($elapsed_time > $session_lifetime) {
+    // Nếu session đã hết hạn, hủy session
+    session_unset();     // Xóa tất cả dữ liệu session
+    session_destroy();   // Hủy session
+    echo "Session đã hết hạn và bị hủy. ";
+} else {
+    // Cập nhật lại thời gian session nếu session vẫn còn hoạt động
+    $_SESSION['session_start_time'] = time();
+}
+
+// Xóa các chi tiết đơn hàng tạm cũ đã quá thời gian (vượt quá session_lifetime)
+$sql_delete_old_order_details = "DELETE FROM chitietdathang WHERE sohoadon IN (
+                                SELECT sohoadon FROM dondathang 
+                                WHERE chedo = 0 
+                                AND nguoidathang = '" . session_id() . "' 
+                                AND TIMESTAMPDIFF(SECOND, ngaychonhang, NOW()) > $session_lifetime
+ )";
+if ($con->query($sql_delete_old_order_details) === TRUE) {
+    //echo "Chi tiết đơn hàng cũ đã được xóa.<br>";
+    } else {
+    echo "Lỗi khi xóa chi tiết đơn hàng: " . $con->error . "<br>";
+}
+
+// Xóa các đơn hàng tạm cũ đã quá thời gian (vượt quá session_lifetime)
+$sql_delete_old_orders = "DELETE FROM dondathang 
+                        WHERE chedo = 0 
+                        AND nguoidathang = '" . session_id() . "' 
+                        AND TIMESTAMPDIFF(SECOND, ngaychonhang, NOW()) > $session_lifetime";
+if ($con->query($sql_delete_old_orders) === TRUE) {
+    //echo "Đơn hàng cũ đã được xóa.<br>";
+    } else {
+    echo "Lỗi khi xóa đơn hàng: " . $con->error . "<br>";
+}
 
 // Lấy session ID (không cần phải gán user là "guest")
 $sessionID = session_id();
@@ -25,14 +82,14 @@ if (isset($_SESSION['message'])) {
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
     $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
-            FROM sanpham 
-            INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
-            INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
-            WHERE chedo = 0 AND nguoidathang = '$user' ";
+        FROM sanpham 
+        INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
+        INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
+        WHERE chedo = 0 AND nguoidathang = '$user' ";
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<form action='xldathang.php' method='post'>";
+        echo "<form action='xldathang.php' method='post' id='cartForm'>"; // Đặt id cho form chính
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
         $i = 1;
@@ -42,11 +99,11 @@ if (isset($_SESSION["user"])) {
             $soluong_tonkho = $row['soluong'];
             echo "<tr>
                 <td>$i</td>
-                <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td>
-                    <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
+                    <input type='number' id='soluong$i' name='soluong$i' value='{$row['soluong_dagui']}' min='1' max='$soluong_tonkho' onchange=\"if (checkQuantity($i, $soluong_tonkho)) updateQuantity($i, '{$row['mahang']}', '{$row['sohoadon']}');\">
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$row['giaban']}</td>
@@ -57,15 +114,25 @@ if (isset($_SESSION["user"])) {
         }
         echo "</table>";
 
-        echo "<div style='text-align: center; margin-top: 20px;'>";
-        echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
-        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
-        echo "</div>";
+        // Thêm nút xác nhận
+        echo "<div style='text-align: center; margin-top: 20px;'>
+            <button type='button' onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>
+            <button type='button' onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>
+        </div>";
         echo "<input type='hidden' value='$i' name='slmahang'>";
-       
+        echo "</form>";
+        echo "<form id='updateCartForm' action='capnhatsl.php' method='post'>
+            <input type='hidden' name='mahang' id='mahang_hidden'>
+            <input type='hidden' name='sohoadon' id='sohoadon_hidden'>
+            <input type='hidden' name='soluong' id='soluong_hidden'>
+            <input type='hidden' name='update_cart' value='1'>
+        </form>";
+
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
-        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
+        echo "<div style='display: flex; justify-content: center; align-items: center;'>
+        <button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>
+      </div>";
 
     }
 } else {
@@ -112,8 +179,9 @@ if (isset($_SESSION["user"])) {
         echo "<input type='hidden' value='$i' name='slmahang'>";
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
-        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
-
+        echo "<div style='display: flex; justify-content: center; align-items: center;'>
+        <button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>
+      </div>";
     }
 }
 
@@ -131,20 +199,30 @@ $con->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ Hàng</title>
     <link rel="stylesheet" href="css/giohang.css">
-
-    <style>
-        
-    </style>
     <script>
-        function checkQuantity(index, maxQuantity) {
+   function updateQuantity(index, mahang, sohoadon) {
+    // Kiểm tra số lượng trước khi cập nhật
+    const quantityValid = checkQuantity(index, document.getElementById(`soluong${index}`);
+
+    if (quantityValid) {
+        // Cập nhật giá trị số lượng và thông tin sản phẩm vào các input ẩn
+        const cartForm = document.getElementById('cartForm'); // Lấy form chính
+        cartForm.submit(); // Gửi form đi tới action của form chính (xldathang.php)
+    }
+}
+
+function checkQuantity(index, maxQuantity) {
     const quantityInput = document.getElementById(`soluong${index}`);
-    const warningMessage = document.getElementById(`warning${index}`);
-    
+    const warningElement = document.getElementById(`warning${index}`);
+
+    // Kiểm tra nếu số lượng vượt quá tồn kho
     if (quantityInput.value > maxQuantity) {
-        warningMessage.style.display = 'block';
-        quantityInput.value = maxQuantity;
+        warningElement.style.display = 'inline';
+        quantityInput.value = maxQuantity; // Reset về tồn kho tối đa nếu vượt quá
+        return false; // Trả về false để ngăn cập nhật nếu không hợp lệ
     } else {
-        warningMessage.style.display = 'none';
+        warningElement.style.display = 'none';
+        return true; // Số lượng hợp lệ
     }
 }
 
@@ -279,7 +357,7 @@ function validateQuantities() {
     </script>
 </head>
 <body>
-    <div id="dathang" style="margin-left: 20%">
+    <div id="dathang">
         <h3>Thông tin giao hàng</h3>
         Người nhận hàng:<input type="text" name="nguoinhan" required><br>
         <label for="province">Tỉnh/Thành phố:</label>

@@ -23,7 +23,7 @@ if (isset($_SESSION["user"])) {
     
             // Cập nhật thông tin nhận hàng và thay đổi trạng thái chế độ đơn hàng thành 1 (hoàn tất)
             $update_dondathang = "UPDATE dondathang SET nguoinhanhang='$nguoinhanhang', 
-                sodienthoai='$sodienthoai', diachinhanhang='$diachinhanhang', thanhpho='$province', chedo=1
+                sodienthoai='$sodienthoai', diachinhanhang='$diachinhanhang', thanhpho='$province', chedo=1, ngaydathang=NOW()
                 WHERE sohoadon='$sohoadon' AND nguoidathang='$user' AND chedo=0";
             $con->query($update_dondathang);  // Chuyển trạng thái chế độ đơn hàng thành 1 (hoàn tất)
     }   else {
@@ -44,13 +44,13 @@ if (isset($_SESSION["user"])) {
                 $soluong = $cart_item['soluong'];
                 $giaban = $cart_item['giaban'];
                 $insert_cart = "INSERT INTO chitietdathang (sohoadon, mahang, soluong, giaban)
-                                VALUES ('$sohoadon', '$mahang', '$soluong', '$giaban')";
+                VALUES ('$sohoadon', '$mahang', '$soluong', '$giaban')";
                 $con->query($insert_cart);
             }
         } else {
             // Nếu giỏ hàng trống, hiển thị thông báo
             $_SESSION['message'] = 'Giỏ hàng của bạn hiện đang trống.';
-            header("Location: giohang.php");
+            echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>";
             exit();
         }
     }
@@ -66,7 +66,7 @@ if (isset($_SESSION["user"])) {
     if ($result->num_rows > 0) {
         // Nếu có đơn hàng tạm, cập nhật đơn hàng
         $update_dondathang = "UPDATE dondathang SET nguoinhanhang='$nguoinhanhang', 
-            sodienthoai='$sodienthoai', diachinhanhang='$diachinhanhang', thanhpho='$province', chedo=1
+            sodienthoai='$sodienthoai', diachinhanhang='$diachinhanhang', thanhpho='$province', chedo=1, ngaydathang=NOW()
             WHERE nguoidathang='$user' AND chedo=0";
         $con->query($update_dondathang);
 
@@ -123,11 +123,6 @@ for ($i = 1; $i <= $slmahang; $i++) {
     } else {
         echo "Không tìm thấy sản phẩm với mã hàng $mahang.";
     }
-}
-// Sau khi đặt hàng thành công
-if (isset($_SESSION['cart'])) {
-    // Reset giỏ hàng cho người dùng chưa đăng nhập
-    unset($_SESSION['cart']); // Xóa giỏ hàng khỏi session
 }
 
 // Chuyển hướng đến trang đơn đặt hàng

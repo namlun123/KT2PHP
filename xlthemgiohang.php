@@ -2,6 +2,8 @@
 session_start(); // Bắt đầu session để lưu trữ thông tin người dùng đăng nhập
 include("connect.inp"); // Kết nối đến cơ sở dữ liệu
 
+
+
 // Lấy các giá trị từ form (mã sản phẩm, giá, và số lượng)
 $masp = $_POST['Masp']; // Mã sản phẩm
 $gia = $_POST['Gia'];    // Giá sản phẩm
@@ -32,6 +34,9 @@ if (isset($_SESSION["user"])) {
         // Nếu đã có đơn hàng chưa hoàn thành, lấy số hóa đơn đó để sử dụng
         $row = $result->fetch_assoc();
         $sohoadon = $row["sohoadon"];
+         // Cập nhật lại ngày giờ khi có sản phẩm mới thêm vào giỏ
+         $update_dondathang = "UPDATE dondathang SET ngaychonhang = NOW() WHERE sohoadon = $sohoadon";
+         $con->query($update_dondathang);
     }
     // Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đặt hàng (chitietdathang) của đơn hàng này chưa
     $sql_check_item = "SELECT * FROM chitietdathang WHERE sohoadon = $sohoadon AND mahang = '$masp'";
@@ -70,6 +75,10 @@ if (isset($_SESSION["user"])) {
         // Nếu đã có đơn hàng chưa hoàn thành, lấy số hóa đơn để sử dụng
         $row = $result->fetch_assoc();
         $sohoadon = $row["sohoadon"];
+         
+        // Cập nhật lại ngày giờ khi có sản phẩm mới thêm vào giỏ
+        $update_dondathang = "UPDATE dondathang SET ngaychonhang = NOW() WHERE sohoadon = $sohoadon";
+        $con->query($update_dondathang);
     }
     // Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đặt hàng (chitietdathang) của đơn hàng này chưa
     $sql_check_item = "SELECT * FROM chitietdathang WHERE sohoadon = $sohoadon AND mahang = '$masp'";
