@@ -97,6 +97,8 @@ if (isset($_SESSION["user"])) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
+            // Định dạng thành tiền với dấu phẩy
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
             echo "<tr>
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
@@ -107,7 +109,7 @@ if (isset($_SESSION["user"])) {
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>
                 <td id='gia$i'>{$row['giaban']}</td>
-                <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
+                <td class='thanhtien' id='thanhtien$i'>{$formatted_thanhtienn} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
             </tr>";
             $i++;
@@ -149,6 +151,8 @@ if (isset($_SESSION["user"])) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
+             // Định dạng thành tiền với dấu phẩy
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
             echo "<tr>
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
@@ -159,7 +163,7 @@ if (isset($_SESSION["user"])) {
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
                 </td>               
                 <td id='gia$i'>{$row['giaban']}</td>
-                <td class='thanhtien' id='thanhtien$i'>{$thanhtien} VNĐ</td>
+                <td class='thanhtien' id='thanhtien$i'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
             </tr>";
             $i++;
