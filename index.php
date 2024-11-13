@@ -33,7 +33,7 @@
                     }
 
                     // Các liên kết cho người dùng đã đăng nhập
-                    echo "<a href='dondathang.php' class='nav-link'>Danh sách đơn hàng</a>";
+                    echo "<a href='dondathang.php?showAll=true' class='nav-link'>Danh sách đơn hàng</a>";
                     echo "<span class='welcome-text'>Xin chào, {$_SESSION['user']}</span>";
                     echo "<a href='logout.php' class='nav-link logout'>Đăng xuất</a>";
 

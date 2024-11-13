@@ -26,7 +26,6 @@ if (isset($_SESSION["user"])) {
     exit();
 } else {
    // Người dùng chưa đăng nhập, kiểm tra giỏ hàng trong cơ sở dữ liệu dựa trên session_id
-
     // Lấy session_id để xác định giỏ hàng tạm thời
     $sessionID = session_id();
 

@@ -72,7 +72,7 @@ if (isset($_SESSION['message'])) {
 // Lấy dữ liệu giỏ hàng của người dùng
 if (isset($_SESSION["user"])) {
     // Nếu đã đăng nhập, lấy giỏ hàng từ cơ sở dữ liệu
-    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang , tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
+    $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
         FROM sanpham 
         INNER JOIN chitietdathang ON sanpham.mahang = chitietdathang.mahang
         INNER JOIN dondathang ON dondathang.sohoadon = chitietdathang.sohoadon
@@ -80,8 +80,8 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
-        
-        echo "<form action='xldathang.php' method='post'>"; // Đặt id cho form chính
+        // Form để cập nhật số lượng trong giỏ hàng qua capnhatsl.php
+        echo "<form action='capnhatsl.php' method='post'>"; 
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
         $i = 1;
@@ -89,17 +89,17 @@ if (isset($_SESSION["user"])) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
-            // Định dạng thành tiền với dấu phẩy
-            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); 
+
             echo "<tr>
                 <td>$i</td>
                 <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
-               <td>
+                <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>   
+                </td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -107,24 +107,23 @@ if (isset($_SESSION["user"])) {
             $i++;
         }
         echo "</table>";
-    
-        // Thêm nút xác nhận
+        
+        // Nút cập nhật giỏ hàng
         echo "<div style='text-align: center; margin-top: 20px;'>
-            <button type='button' onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>
-            <button type='button' onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>
+            <button type='submit' class='update-cart-btn'>Cập nhật giỏ hàng</button>
         </div>";
         echo "<input type='hidden' value='$i' name='slmahang'>";
-
+        echo "</form>"; // Đóng form cập nhật
+        echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
+        echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
 
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         echo "<div style='display: flex; justify-content: center; align-items: center;'>
         <button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Quay lại trang chủ</button>
       </div>";
-
     }
-} else {
-    
+} else { 
     // Nếu người dùng chưa đăng nhập, lấy giỏ hàng từ session
     // Sử dụng session_id để lấy giỏ hàng tạm thời từ cơ sở dữ liệu
     $sql = "SELECT chitietdathang.sohoadon, chitietdathang.mahang, tenhang, hinhanh, giaban, chitietdathang.soluong as soluong_dagui, sanpham.soluong
@@ -135,8 +134,7 @@ if (isset($_SESSION["user"])) {
     $result = $con->query($sql);
 
     if ($result->num_rows > 0) {
-        
-        echo "<form action='xldathang.php' method='post'>";
+        echo "<form action='capnhatsl.php' method='post'>"; 
         echo "<table><tr><td>STT</td><td>Mã hàng</td><td>Tên hàng</td><td>Hình ảnh</td><td>Số lượng</td><td>Giá bán</td><td>Thành tiền</td><td>Xóa</td></tr>";
 
         $i = 1;
@@ -144,17 +142,17 @@ if (isset($_SESSION["user"])) {
             $thanhtien = $row['giaban'] * $row['soluong_dagui'];
             $mahang = $row['mahang'];
             $soluong_tonkho = $row['soluong'];
-             // Định dạng thành tiền với dấu phẩy
-            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); // Định dạng số không có phần thập phân và ngăn cách hàng nghìn bằng dấu chấm
+            $formatted_thanhtien = number_format($thanhtien, 0, ',', '.'); 
+
             echo "<tr>
                 <td>$i</td>
-                <td>{$row['mahang']}<input type='hidden' value='{$row['mahang']}' name='mahang$i'></td>
+                <td>{$row['mahang']}<input type='hidden' name='mahang$i' value='{$row['mahang']}'></td>
                 <td>{$row['tenhang']}</td>
                 <td><img src='image/{$row["hinhanh"]}' alt='{$row["tenhang"]}' style='width: 50px; height: 50px;'></td>
                 <td>
                     <input type='number' id='soluong$i' value='{$row['soluong_dagui']}' name='soluong$i' min='1' max='$soluong_tonkho' onchange='checkQuantity($i, $soluong_tonkho); tinhtien($i)'>
                     <span id='warning$i' style='color: red; display: none;'>Hiện trong kho chỉ còn $soluong_tonkho! Bạn vui lòng chọn ít hơn.</span>
-                </td>           
+                </td>
                 <td id='gia$i'>{$row['giaban']}</td>
                 <td class='thanhtien' id='thanhtien$i' data-thanhtien='{$thanhtien}'>{$formatted_thanhtien} VNĐ</td>
                 <td><a href='xlxoaspgiohang.php?mahang={$row['mahang']}&sohoadon={$row['sohoadon']}' onclick='return ktraxoa();'>Xóa</a></td>
@@ -162,12 +160,16 @@ if (isset($_SESSION["user"])) {
             $i++;
         }
         echo "</table>";
-    
-        echo "<div style='text-align: center; margin-top: 20px;'>";
+        
+        // Nút cập nhật giỏ hàng
+        echo "<div style='text-align: center; margin-top: 20px;'>
+            <button type='submit' class='update-cart-btn'>Cập nhật giỏ hàng</button>
+        </div>";
+        echo "<input type='hidden' value='$i' name='slmahang'>";
+        echo "</form>"; // Đóng form cập nhật
         echo "<button onclick='if (confirm(\"Bạn có muốn xóa giỏ hàng không?\")) { window.location.href=\"xlxoagio.php\"; }' class='delete-btn'>Xóa giỏ hàng</button>";
         echo "<button onclick=\"window.location.href='index.php'\" class='continue-shopping-btn'>Tiếp tục mua hàng</button>";
-        echo "</div>";
-        echo "<input type='hidden' value='$i' name='slmahang'>";
+
     } else {
         echo "<p style='text-align: center;'>Giỏ hàng của bạn hiện đang trống.</p>";
         echo "<div style='display: flex; justify-content: center; align-items: center;'>
@@ -188,17 +190,91 @@ $con->close();
     <link rel="stylesheet" href="css/giohang.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    function checkQuantity(index, maxQuantity) {
-    const quantityInput = document.getElementById(`soluong${index}`);
-    const warningMessage = document.getElementById(`warning${index}`);
-    
-    if (quantityInput.value > maxQuantity) {
-        warningMessage.style.display = 'block';
-        quantityInput.value = maxQuantity;
-    } else {
-        warningMessage.style.display = 'none';
-    }
-}
+        // Hàm kiểm tra số lượng
+        function checkQuantity(index, maxQuantity) {
+            const quantityInput = document.getElementById(`soluong${index}`);
+            const warningMessage = document.getElementById(`warning${index}`);
+            
+            if (quantityInput.value > maxQuantity) {
+                warningMessage.style.display = 'block';
+                quantityInput.value = maxQuantity;
+            } else {
+                warningMessage.style.display = 'none';
+            }
+        }
+
+        function submitHiddenOrderForm() {
+                // Lấy giá trị từ các trường input
+                nguoinhan = nguoinhan.value;
+                province = province.value;
+                diachi = diachi.value;
+                sdt = sdt.value;
+
+                // Lấy form
+                var form = document.getElementById("orderForm");
+
+                // Tạo các trường hidden cho thông tin giao hàng
+                var nguoinhanHidden = document.createElement("input");
+                nguoinhanHidden.type = "hidden";
+                nguoinhanHidden.name = "nguoinhan";
+                nguoinhanHidden.value = nguoinhan;
+                form.appendChild(nguoinhanHidden);
+
+                var provinceHidden = document.createElement("input");
+                provinceHidden.type = "hidden";
+                provinceHidden.name = "province";
+                provinceHidden.value = province;
+                form.appendChild(provinceHidden);
+
+                var diachiHidden = document.createElement("input");
+                diachiHidden.type = "hidden";
+                diachiHidden.name = "diachi";
+                diachiHidden.value = diachi;
+                form.appendChild(diachiHidden);
+
+                var sdtHidden = document.createElement("input");
+                sdtHidden.type = "hidden";
+                sdtHidden.name = "sdt";
+                sdtHidden.value = sdt;
+                form.appendChild(sdtHidden);
+
+                // Lấy giá trị slmahang từ input
+                var slmathang = document.querySelector('input[name="slmahang"]').value; // Số lượng mặt hàng
+                
+                // Kiểm tra xem số lượng mặt hàng có hợp lệ không
+                if (slmathang <= 0) {
+                    alert("Vui lòng chọn ít nhất một mặt hàng!");
+                    return; // Dừng nếu không có mặt hàng
+                }
+
+                // Tạo trường hidden cho slmahang
+                var slmahangHidden = document.createElement("input");
+                slmahangHidden.type = "hidden";
+                slmahangHidden.name = "slmahang";
+                slmahangHidden.value = slmathang;
+                form.appendChild(slmahangHidden);
+
+                // Thêm dữ liệu vào form
+                for (var i = 1; i <= slmathang; i++) {
+                    var mahangInput = document.querySelector('input[name="mahang' + i + '"]');
+                    var soluongInput = document.querySelector('input[name="soluong' + i + '"]');
+                    if (mahangInput && soluongInput) {
+                        
+                        var mahangHiddenInput = document.createElement("input");
+                        mahangHiddenInput.type = "hidden";
+                        mahangHiddenInput.name = "mahang" + i;
+                        mahangHiddenInput.value = mahangInput.value;
+                        form.appendChild(mahangHiddenInput);
+
+                        var soluongHiddenInput = document.createElement("input");
+                        soluongHiddenInput.type = "hidden";
+                        soluongHiddenInput.name = "soluong" + i;
+                        soluongHiddenInput.value = soluongInput.value;
+                        form.appendChild(soluongHiddenInput);
+                    }
+                }
+            form.submit();
+        }
 
         // Hàm xác nhận xóa
         function ktraxoa() {
@@ -253,89 +329,89 @@ $con->close();
         }
 
 
-    // Tính phí vận chuyển và cập nhật thành tiền
-    function calculateShipping() {
-        var province = document.getElementById("province").value;
-        var shippingCost = 0;
+        // Tính phí vận chuyển và cập nhật thành tiền
+        function calculateShipping() {
+            var province = document.getElementById("province").value;
+            var shippingCost = 0;
 
-        switch (province) {
-            case "Hà Nội":
-                shippingCost = 30000;
-                break;
-            case "Hà Giang":
-            case "Hà Nam":
-            case "Hải Dương":
-            case "Hải Phòng":
-            case "Hòa Bình":
-            case "Hưng Yên":
-            case "Lai Châu":
-            case "Lạng Sơn":
-            case "Ninh Bình":
-            case "Phú Thọ":
-            case "Quảng Ninh":
-            case "Sơn La":
-            case "Thái Bình":
-            case "Thái Nguyên":
-            case "Tuyên Quang":
-            case "Yên Bái":
-                shippingCost = 40000;
-                break;
-            case "Đà Nẵng":
-            case "Bình Định":
-            case "Hà Tĩnh":
-            case "Thanh Hóa":
-            case "Khánh Hòa":
-            case "Nghệ An":
-            case "Ninh Thuận":
-            case "Phú Yên":
-            case "Quảng Bình":
-            case "Quảng Nam":
-            case "Quảng Ngãi":
-            case "Quảng Trị":
-            case "Thừa Thiên Huế":
-            case "Vĩnh Phúc":
-                shippingCost = 45000;
-                break;
-            case "An Giang":
-            case "Bà Rịa - Vũng Tàu":
-            case "Bạc Liêu":
-            case "Bến Tre":
-            case "Bình Dương":
-            case "Bình Phước":
-            case "Cà Mau":
-            case "Cần Thơ":
-            case "Đắk Lắk":
-            case "Đắk Nông":
-            case "Gia Lai":
-            case "Kiên Giang":
-            case "Kon Tum":
-            case "Lâm Đồng":
-            case "Sóc Trăng":
-            case "Tây Ninh":
-            case "Long An":
-            case "Tiền Giang":
-            case "Trà Vinh":
-            case "Vĩnh Long":
-                shippingCost = 50000;
-                break;
-            default:
-                shippingCost = 0;
+            switch (province) {
+                case "Hà Nội":
+                    shippingCost = 30000;
+                    break;
+                case "Hà Giang":
+                case "Hà Nam":
+                case "Hải Dương":
+                case "Hải Phòng":
+                case "Hòa Bình":
+                case "Hưng Yên":
+                case "Lai Châu":
+                case "Lạng Sơn":
+                case "Ninh Bình":
+                case "Phú Thọ":
+                case "Quảng Ninh":
+                case "Sơn La":
+                case "Thái Bình":
+                case "Thái Nguyên":
+                case "Tuyên Quang":
+                case "Yên Bái":
+                    shippingCost = 40000;
+                    break;
+                case "Đà Nẵng":
+                case "Bình Định":
+                case "Hà Tĩnh":
+                case "Thanh Hóa":
+                case "Khánh Hòa":
+                case "Nghệ An":
+                case "Ninh Thuận":
+                case "Phú Yên":
+                case "Quảng Bình":
+                case "Quảng Nam":
+                case "Quảng Ngãi":
+                case "Quảng Trị":
+                case "Thừa Thiên Huế":
+                case "Vĩnh Phúc":
+                    shippingCost = 45000;
+                    break;
+                case "An Giang":
+                case "Bà Rịa - Vũng Tàu":
+                case "Bạc Liêu":
+                case "Bến Tre":
+                case "Bình Dương":
+                case "Bình Phước":
+                case "Cà Mau":
+                case "Cần Thơ":
+                case "Đắk Lắk":
+                case "Đắk Nông":
+                case "Gia Lai":
+                case "Kiên Giang":
+                case "Kon Tum":
+                case "Lâm Đồng":
+                case "Sóc Trăng":
+                case "Tây Ninh":
+                case "Long An":
+                case "Tiền Giang":
+                case "Trà Vinh":
+                case "Vĩnh Long":
+                    shippingCost = 50000;
+                    break;
+                default:
+                    shippingCost = 0;
+            }
+
+            document.getElementById("shippingCost").innerText = formatCurrency(shippingCost);
+            tinhTongTien();
         }
 
-        document.getElementById("shippingCost").innerText = formatCurrency(shippingCost);
-        tinhTongTien();
-    }
-
-    // Khi trang tải lại, tính tổng tiền và các chi phí khác
-    window.onload = function() {
-        tinhTongTien();
-    };
+        // Khi trang tải lại, tính tổng tiền và các chi phí khác
+        window.onload = function() {
+            tinhTongTien();
+        };
     </script>
 </head>
 <body>
     <div id="dathang">
         <h3>Thông tin giao hàng</h3>
-        Người nhận hàng:<input type="text" name="nguoinhan" required><br>
+        Người nhận hàng:<input type="text" id="nguoinhan" name="nguoinhan" required><br>
         <label for="province">Tỉnh/Thành phố:</label>
         <select id="province" name="province" onchange="calculateShipping()" required>
             <option value="">Chọn tỉnh/thành phố</option>
@@ -390,21 +466,23 @@ $con->close();
             <option value="Vĩnh Phúc">Vĩnh Phúc</option>
             <option value="Yên Bái">Yên Bái</option>
         </select><br>
-        Địa chỉ:<input type="text" name="diachi" required><br>
-        Số điện thoại:<input type="text" name="sdt" required><br>
+        Địa chỉ:<input type="text" id="diachi" name="diachi" required><br>
+        Số điện thoại:<input type="text" id="sdt" name="sdt" required><br>
+        <form id="orderForm" action="xldathang.php" method="POST">
+            <input type="hidden" name="vat" value="0">
+            <input type="hidden" name="tongtien" value="0">
+            <input type="hidden" name="shipping" value="0">
 
-        <!-- <label for="shippingCost">Phí vận chuyển:</label>
-        <span id="shippingCost">0 VNĐ</span><br> -->
-        <input type='hidden' name='vat' value="0">
-        <input type='hidden' name='tongtien' value="0">
-        <input type='hidden' name='shipping' value="0">
-        <form action="xldathang.php" method="post">
-        <input type="submit" value="Đặt hàng">
+            <!-- Các trường hidden cho mã hàng và số lượng sẽ được thêm động vào đây -->
+
+            <button type="button" class="place-order-btn" style="margin-top: 20px;" onclick="submitHiddenOrderForm();">
+                Đặt hàng
+            </button>
         </form>
     </div>
     <?php
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Tổng tiền: <span id='tongtien'>0 VNĐ</span></div>";
-     echo "<script>tinhTongTien();</script>"; // Tính tổng tiền khi tải trang
+     echo "<script>tinhTongTien();</script>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>VAT: <span id='VAT'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Phí vận chuyển: <span id='shippingCost'>0 VNĐ</span></div>";
      echo "<div style='text-align: center; margin-top: 20px; font-weight: bold;'>Thành tiền: <span id='thanhTienTong'>0 VNĐ</span></div>";
