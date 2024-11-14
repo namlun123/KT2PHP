@@ -80,7 +80,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
-.update-cart-btn .continue-shopping-btn {
+button,.update-cart-btn,.continue-shopping-btn {
     padding: 10px 20px;
     background-color: #24235f;
     color: white;
@@ -92,11 +92,11 @@ a:hover {
     text-align: center;
 }
 
-.continue-shopping-btn:hover {
+button:hover,.update-cart-btn:hover,.continue-shopping-btn:hover {
     background-color: #65698d;
 }
 
-.continue-shopping-btn:active {
+button:active,.update-cart-btn:active, .continue-shopping-btn:active {
     background-color: #3e8e41;
     transform: scale(0.98);
 }
@@ -121,3 +121,4 @@ a:hover {
     background-color: #a94442;
     transform: scale(0.98);
 }
+

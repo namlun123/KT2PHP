@@ -11,8 +11,13 @@
 <?php
 include("connect.inp");
 session_start();
-$user = $_SESSION["user"] ?? 'admin';
-
+// Kiểm tra nếu người dùng đã đăng nhập
+if (isset($_SESSION["user"])) {
+    // Nếu người dùng đã đăng nhập
+    $user = $_SESSION["user"];
+} else {
+ $user = session_id();
+   }
 // Kiểm tra nếu người dùng đã nhấn nút "Xem tất cả đơn hàng"
 $showAllOrders = isset($_GET['showAll']) ? true : false;
 
